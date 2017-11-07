@@ -8,6 +8,21 @@
       'contents': [
         {
           'type': 'file',
+          'name': "ActivityManager.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/Fitness Activity/ActivityManager.h"
+        },
+        {
+          'type': 'file',
+          'name': "DeviceUsageManager.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/Phone Usage/DeviceUsageManager.h"
+        },
+        {
+          'type': 'file',
+          'name': "InstantDataBase.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/DataBase/InstantDataBase.h"
+        },
+        {
+          'type': 'file',
           'name': "InstantSdkiOSLib-Swift.h",
           'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/Build/Products/Debug-iphonesimulator/InstantSdkiOSLib.framework/Headers/InstantSdkiOSLib-Swift.h"
         },
@@ -15,6 +30,31 @@
           'type': 'file',
           'name': "InstantSdkiOSLib.h",
           'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/InstantSdkiOSLib.h"
+        },
+        {
+          'type': 'file',
+          'name': "LocationManager.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/Location/LocationManager.h"
+        },
+        {
+          'type': 'file',
+          'name': "LocationNameAndTime.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/DataBase/LocationNameAndTime.h"
+        },
+        {
+          'type': 'file',
+          'name': "SleepManager.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/Sleep/SleepManager.h"
+        },
+        {
+          'type': 'file',
+          'name': "StepsManager.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/Fitness Activity/StepsManager.h"
+        },
+        {
+          'type': 'file',
+          'name': "UIDevice+PasscodeStatus.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/Phone Usage/UIDevice+PasscodeStatus.h"
         }
       ]
     },
