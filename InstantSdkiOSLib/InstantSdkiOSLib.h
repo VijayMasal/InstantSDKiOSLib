@@ -16,4 +16,11 @@ FOUNDATION_EXPORT const unsigned char InstantSdkiOSLibVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <InstantSdkiOSLib/PublicHeader.h>
 
-
+#import "InstantDataBase.h"
+#import "LocationNameAndTime.h"
+#import "SleepManager.h"
+#import "ActivityManager.h"
+#import "StepsManager.h"
+#import "LocationManager.h"
+#import "UIDevice+PasscodeStatus.h"
+#import "DeviceUsageManager.h"
