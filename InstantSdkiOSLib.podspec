@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
 
   
   s.name         = "InstantSdkiOSLib"
-  s.version      = "2.5"
+  s.version      = "2.6"
   s.summary      = "A short description of InstantSdkiOSLib."
 
   
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
  
 
   
-  s.source       = { :git => "https://github.com/VijayMasal/InstantSdkiOSLib.git", :tag => "2.5" }
+  s.source       = { :git => "https://github.com/VijayMasal/InstantSdkiOSLib.git", :tag => "2.6" }
 
 
  
