@@ -1,0 +1,6 @@
+framework module InstantSdkiOSLib {
+  umbrella header "InstantSdkiOSLib.h"
+
+  export *
+  module * { export * }
+}

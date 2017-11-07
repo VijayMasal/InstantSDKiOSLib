@@ -1,0 +1,33 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/Build/Products/Debug-iphonesimulator/InstantSdkiOSLib.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "InstantSdkiOSLib-Swift.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/Build/Products/Debug-iphonesimulator/InstantSdkiOSLib.framework/Headers/InstantSdkiOSLib-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "InstantSdkiOSLib.h",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/InstantSdkiOSLib/InstantSdkiOSLib.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/Build/Products/Debug-iphonesimulator/InstantSdkiOSLib.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/shashwat/Music/Vijay iOS/InstantPod/07:11:17/InstantSdkiOSLib/Build/Intermediates/InstantSdkiOSLib.build/Debug-iphonesimulator/InstantSdkiOSLib.build/module.modulemap"
+        }
+      ]
+    }
+  ]
+}
