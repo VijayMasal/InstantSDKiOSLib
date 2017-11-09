@@ -30,7 +30,7 @@ NSString * const UIDevicePasscodeKeychainAccount = @"UIDevice-PasscodeStatus_Key
 - (LNPasscodeStatus)passcodeStatus
 {
 #if TARGET_IPHONE_SIMULATOR
-    NSLog(@"-[%@ %@] - not supported in simulator", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
+   
     return LNPasscodeStatusUnknown;
 #endif
     

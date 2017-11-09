@@ -12,7 +12,7 @@
 #import "ActivityManager.h"
 #import "SleepManager.h"
 #import "StepsManager.h"
-
+#define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 
 @implementation LocationManager
 /// Creates location manager singletone class. That class manages all location related information like location name, time, latitude, longitude and date.

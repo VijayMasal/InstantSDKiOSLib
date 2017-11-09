@@ -48,38 +48,50 @@ static StepsManager *sharedStepsManager=nil;
         HKHealthStore *healthStore;
         
         healthStore=[[HKHealthStore alloc]init];
-        if ([HKHealthStore isHealthDataAvailable] == NO)
+        if ([HKHealthStore isHealthDataAvailable] == YES)
         {
-            // If our device doesn't support HealthKit -> return.
-            return;
-        }
-        
+      
         NSSet *readObjectTypes  = [NSSet setWithObjects:[HKSampleType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount],  nil];
         
         [healthStore requestAuthorizationToShareTypes:nil
                                             readTypes:readObjectTypes
                                            completion:^(BOOL success, NSError *  error)
          {
-             
-             NSLog(@"Step permission Success");
-             dispatch_async(dispatch_get_main_queue(), ^{
-                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
-                 [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"customeactivtiy"];
-             });
-             permissions.isHealthKitActivity=YES;
-             [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
-             
-             handler(1);
+             if (success==YES)
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
+                     [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"customeactivtiy"];
+                 });
+                 permissions.isHealthKitActivity=YES;
+                 [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
+                 
+                 handler(1);
+             }
+             else
+             {
+                 permissions.isHealthKitActivity=NO;
+                 handler(0);
+             }
+            
          }];
+        }
+        else
+        {
+            permissions.isHealthKitActivity=NO;
+            handler(0);
+        }
         
         
         
     }
     else
     {
+        permissions.isHealthKitActivity=NO;
         handler(0);
         
     }
+        
     
 }
 
@@ -229,7 +241,6 @@ static StepsManager *sharedStepsManager=nil;
      {
          if (error)
          {
-             NSLog(@"errors =%@",error.description);
              activityHandler([totalSteps integerValue]);
          }
          else
@@ -342,14 +353,14 @@ static StepsManager *sharedStepsManager=nil;
                                                         {
                                                             
                                                             NSDictionary *mainDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-                                                            NSLog(@"JSon Response= %@",mainDict);
+                                                           
                                                             totalSteps=[NSNumber numberWithInteger:[[[mainDict objectForKey:@"summary"] objectForKey:@"steps"] integerValue]] ;
                                                             activityHandler([totalSteps integerValue]);
                                                             
                                                         }
                                                         else
                                                         {
-                                                            NSLog(@"Error:%@", error.description);
+                                                           
                                                             activityHandler([totalSteps integerValue]);
                                                             
                                                         }

@@ -183,7 +183,6 @@ static InstantDataBase* sharedInstantDataBase=nil;
 {
     NSFileManager *filemanager=[NSFileManager defaultManager];
     NSString *dataBasePath=[self getDocumentpath];
-    NSLog(@"dataBasePath=%@",dataBasePath);
     BOOL exist=[filemanager fileExistsAtPath:dataBasePath];
     
     if (exist == YES)
@@ -196,63 +195,13 @@ static InstantDataBase* sharedInstantDataBase=nil;
         if (isOpenDataBase==YES)
         {
             //creates place table in database if create return YES otherwise NO
-            BOOL placeTable=[self createPlaceTableInDatabase];
-            
-            if (placeTable==YES)
-            {
-                NSLog(@"create Place table in dataBase");
-            }
-            else
-            {
-                NSLog(@"Fail to create Place table in dataBase");
-            }
-            
+           [self createPlaceTableInDatabase];
             //create steps table
-            BOOL stepsTable=[self createStepsTable];
-            if (stepsTable==YES)
-            {
-                NSLog(@"create steps table in dataBase");
-            }
-            else
-            {
-                NSLog(@"Fail to create steps table in dataBase");
-            }
-            
-            
+            [self createStepsTable];
             //create fitness table in database if create return YES otherwise NO
-            BOOL fitnessTable=[self creteFitnessTableInDatabase];
-            if (fitnessTable==YES)
-            {
-                NSLog(@"create fitness table in dataBase");
-            }
-            else
-            {
-                NSLog(@"Fail to create fitness table in dataBase");
-            }
-            
-            
-            BOOL sleepTable=[self creteSleepTableInDatabase];
-            if (sleepTable==YES)
-            {
-                NSLog(@"create sleep table in dataBase");
-            }
-            else
-            {
-                NSLog(@"Fail to create sleep table in dataBase");
-            }
-            
-            BOOL deviceUsageTable=[self createDeviceUsageTableInDatabase];
-            
-            if (deviceUsageTable==YES)
-            {
-                NSLog(@"create Device Usage table in dataBase");
-            }
-            else
-            {
-                NSLog(@"Fail to create Device Usage table in dataBase");
-            }
-            
-            
+            [self creteFitnessTableInDatabase];
+           [self creteSleepTableInDatabase];
+           [self createDeviceUsageTableInDatabase];
             
         }
     }
@@ -507,7 +456,6 @@ static InstantDataBase* sharedInstantDataBase=nil;
     {
         if (sqlite3_step(statement)==SQLITE_DONE)
         {
-            NSLog(@"place insert");
             isInsert=YES;
         }
         sqlite3_finalize(statement);
@@ -525,8 +473,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
     {
         if (sqlite3_step(statement)==SQLITE_DONE)
         {
-            
-            NSLog(@"place update");
+         
             isUpdate=YES;
             
         }
@@ -1009,8 +956,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
         {
             if (sqlite3_step(phoneStatement)==SQLITE_DONE)
             {
-                NSLog(@"delete %@ record",tableName);
-                
+             
                 [self insertCurrentRecordAfterDeleteRecordsFromDatabase:tableName];
                 if ([tableName isEqualToString:@"Sleep"])
                 {
@@ -1257,11 +1203,9 @@ static InstantDataBase* sharedInstantDataBase=nil;
     
     
     if (! jsonData) {
-        NSLog(@"Got an error: %@", error);
         handler(nil,error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        NSLog(@"PhoneUsage=%@",jsonString);
         handler(jsonString,error);
     }
     
@@ -1470,8 +1414,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
     }
     
     sqlite3_close(instantDB);
-    NSLog(@"terminate");
-    
+ 
 }
 
 @end

@@ -281,7 +281,7 @@ static NSString * const placenamekey=@"placename";
 
 #pragma mark -Delete Records form database;
 /*!
- * @discussion delete database table records from selected date to yesterday.
+ * @discussion delete database table records from given fromDate to toDate.
  */
 -(void)deleteRecordsFromDate:(NSDate *)date toDate:(NSDate *)toDate withCallbackHandler:(void(^)(BOOL isDelete))handler;
 

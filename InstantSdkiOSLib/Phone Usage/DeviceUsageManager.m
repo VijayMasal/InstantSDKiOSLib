@@ -46,7 +46,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 /// Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
 
 
--(void)startPhoneUsageTracking:(void(^)(NSInteger status))handler
+-(void)startPhoneUsageTracking:(void(^)(phoneUsagePermission))handler;
 {
     BOOL passcodeEnable=[self checkPasscodeState];
     if (passcodeEnable==YES)
@@ -56,17 +56,17 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
         if (isStart==YES)
         {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastLocation"];
-            handler(1);
+            handler(PhoneUsageTrackingSuccess);
         }
         else
         {
-            handler(0);
+            handler(PhoneUsageTrackingFail);
             
         }
     }
     else
     {
-        handler(2);
+        handler(PasscodeNotEnable);
     }
     
     
@@ -162,28 +162,9 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
     
-    NSString *errorString = [self keychainErrorToString:status];
-    NSString *message = [NSString stringWithFormat:@"SecItemDelete status: %@", errorString];
-    
-    if ([message isEqualToString:@"SecItemDelete status: success"])
-    {
-        
-        NSLog(@"%@",message);
-        
-        
-    }
-    else
-    {
-        NSLog(@"%@",message);
-        
-    }
-    
+   [self keychainErrorToString:status];
     [self addItemAsync];
-    
-    
-    
-    
-    
+ 
 }
 - (void)addItemAsync {
     CFErrorRef error = NULL;
@@ -195,8 +176,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
     if (sacObject == NULL || error != NULL)
     {
-        NSLog(@"can't create sacObject: %@", error);
-        
+     
         return;
     }
     
@@ -218,8 +198,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     NSString *message = [NSString stringWithFormat:@"SecItemAdd status: %@", errorString];
     if ([message isEqualToString:@"SecItemAdd status: success"])
     {
-        
-        NSLog(@"%@",message);
+     
         _isUnlock=NO;
         [self deviceUsageTime:_isUnlock];
         
@@ -229,7 +208,6 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     {
         if (_isUnlock==NO)
         {
-            NSLog(@"%@",message);
             _isUnlock=YES;
             [self deviceUsageTime:_isUnlock];
             

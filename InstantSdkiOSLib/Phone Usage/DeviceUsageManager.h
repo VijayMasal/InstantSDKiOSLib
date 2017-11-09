@@ -11,7 +11,16 @@
 #import "UIDevice+PasscodeStatus.h"
 #import "LocationNameAndTime.h"
 
+
 @protocol  DeviceUsageDelegate ;
+typedef NS_ENUM(NSUInteger, phoneUsagePermission){
+    ///phone usage tracking successfully
+    PhoneUsageTrackingSuccess  = 1,
+    ///Failed phone usage tracking
+    PhoneUsageTrackingFail   = 0,
+   ///Passcode not enable
+    PasscodeNotEnable  = 2
+};
 @interface DeviceUsageManager : NSObject
 
 {
@@ -30,9 +39,9 @@
 @property(strong,nonatomic)id notificationToken;
 
 /*!
- * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 2.if passcode not enable handler returns 3.
+ * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
  */
--(void)startPhoneUsageTracking:(void(^)(NSInteger status))handler;
+-(void)startPhoneUsageTracking:(void(^)(phoneUsagePermission))handler;
 /*!
  * @discussion Start timer for getting device usage time and unlock counts.
  */

@@ -138,19 +138,13 @@ static SleepManager *sharedSleepManager=nil;
         
         
         [self getSleepDataUsingCoreMotionFromStartTime:[[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime] toEndTime:[[InstantDataBase sharedInstantDataBase] sleepEndTime:toEndTime] withCallBack:^(BOOL isSleepData)
-         {
-             NSLog(@"Sleep Data from core motion");
-         }];
+         {}];
     }
     else if ([sleepOptionName isEqualToString:@"healthkit"])
     {
         
         [[SleepManager sharedSleepManager]getSleepDataUsingHealthKit:[[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime] toEndTime:[[InstantDataBase sharedInstantDataBase] sleepEndTime:toEndTime] withCallBack:^(BOOL isSleepData)
          {
-             
-             NSLog(@"get Sleep Data From HealthKit");
-             
-             
          }];
         
         
@@ -159,7 +153,6 @@ static SleepManager *sharedSleepManager=nil;
     {
         [[SleepManager sharedSleepManager]getSleepDataUsingFitBit:[[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime] withCallBack:^(BOOL isSleepData)
          {
-             NSLog(@"get Sleep Data From FitBit");
          }];
         
     }
@@ -246,11 +239,7 @@ static SleepManager *sharedSleepManager=nil;
         startSleepDate=[[sleepData valueForKey:@"startDate"] firstObject];
         tempDate=[[sleepData valueForKey:@"startDate"] lastObject];
         NSArray *arrayForStartDate = [NSArray arrayWithArray:[sleepData valueForKey:@"startDate"]];
-        //NSLog(@"Start Date: %@ ",arrayForStartDate);
         NSArray *arrayForConfidence = [NSArray arrayWithArray:[sleepData valueForKey:@"confidence"]];
-        //NSLog(@"Confidence: %@ ",arrayForConfidence);
-        
-        
         NSArray *arrayForStationary = [NSArray arrayWithArray:[sleepData valueForKey:@"stationary"]];
         
         
@@ -261,8 +250,6 @@ static SleepManager *sharedSleepManager=nil;
             {
                 if(([sleepData objectAtIndex:i] == [sleepData lastObject]) && ([[arrayForStationary lastObject]intValue] == 1) && [[arrayForConfidence lastObject] intValue] == 2)
                 {
-                    NSLog(@"Last Object");
-                    
                     ///Get difference between lastActivity Time and Ending Time...
                     int difference = [endTime timeIntervalSinceDate:[arrayForStartDate lastObject]];
                     
@@ -429,12 +416,7 @@ static SleepManager *sharedSleepManager=nil;
     
     HKSampleQuery *query = [[HKSampleQuery alloc] initWithSampleType:sampleType predicate:predicate limit:0 sortDescriptors:nil resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error)
                             {
-                                if (!results)
-                                {
-                                    NSLog(@"An error occured fetching the user's sleep duration. In your app, try to handle this gracefully. The error was: %@.", error);
-                                    // completion(0, error);
-                                    // abort();
-                                }
+                               
                                 
                                 double minutesSleepAggr = 0;
                                 
@@ -497,7 +479,6 @@ static SleepManager *sharedSleepManager=nil;
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     
     NSString *dateStr = [dateFormatter stringFromDate:[self StartTime:startTime]];
-    NSLog(@"Date= %@", dateStr);
     
     NSString *urlString = [NSString stringWithFormat:@"https://api.fitbit.com/1/user/%@/sleep/date/%@.json",user_id, dateStr];
     NSURL * url = [NSURL URLWithString:urlString];
@@ -523,7 +504,6 @@ static SleepManager *sharedSleepManager=nil;
                                                
                                                NSMutableDictionary *summaryDict = [[NSMutableDictionary alloc]init];
                                                summaryDict = [sleepDataDict valueForKey:@"summary"];
-                                               NSLog(@"SummaryDict JSon Data = %@",summaryDict);
                                                if (summaryDict!=nil && summaryDict.count>0)
                                                {
                                                    NSString *strSleepMinute=[summaryDict valueForKey:@"totalMinutesAsleep"];
@@ -562,7 +542,7 @@ static SleepManager *sharedSleepManager=nil;
                                                        [df setDateStyle:NSDateFormatterMediumStyle];
                                                        [df setTimeStyle:NSDateFormatterMediumStyle];
                                                        strCurrentDate = [df stringFromDate:sleepDate];
-                                                       NSLog(@"Current Date and Time: %@",strCurrentDate);
+                            
                                                        //int hoursToAdd = 3;
                                                        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
                                                        NSDateComponents *components = [[NSDateComponents alloc] init];
@@ -572,8 +552,7 @@ static SleepManager *sharedSleepManager=nil;
                                                        [df setDateStyle:NSDateFormatterMediumStyle];
                                                        [df setTimeStyle:NSDateFormatterMediumStyle];
                                                        strNewDate = [df stringFromDate:newDate];
-                                                       NSLog(@"New Date and Time: %@",strNewDate);
-                                                       
+                                                     
                                                        [_dateFormatter setDateFormat:@"MMM dd,YYYY HH:mm:ss"];
                                                        
                                                        // NSString *wakeupSleep=[_dateFormatter stringFromDate:newDate];
@@ -601,7 +580,7 @@ static SleepManager *sharedSleepManager=nil;
                                            }
                                            else
                                            {
-                                               NSLog(@"Error:%@", error.description);
+                                              
                                                FitBitSleepActivity(NO);
                                                
                                            }
