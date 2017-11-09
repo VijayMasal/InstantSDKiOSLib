@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
 
   
   s.name         = "InstantSdkiOSLib"
-  s.version      = "1.7"
+  s.version      = "2.7"
   s.summary      = "A short description of InstantSdkiOSLib."
 
   s.homepage     = "http://emberify.com/"
