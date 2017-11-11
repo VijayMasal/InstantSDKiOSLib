@@ -40,7 +40,7 @@ static StepsManager *sharedStepsManager=nil;
 }
 
 /// Start steps tracking using healthkit.if healthkit tracking start successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
--(void)startHealthKitActivityTracking:(void(^)(StepsHealthKitPermission))handler
+-(void)startHealthKitActivityTracking:(stepsCustomCompletionBlock)handler
 {
 
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
@@ -110,7 +110,7 @@ static StepsManager *sharedStepsManager=nil;
 
 /// Start steps tracking using fitbit.if fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail.
 
--(void)startFitBitActivityTracking:(void(^)(StepsFitBitPermission))handler;
+-(void)startFitBitActivityTracking:(stepFitBitCustomCompletionBlock)handler
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitActivity==NO || permissions.isCustomeActivity==NO)
@@ -128,7 +128,7 @@ static StepsManager *sharedStepsManager=nil;
     else
     {
         
-        handler(StepsHealthKitPermissionFail);
+        handler(StepsFitBitPermissionFail);
     }
     
 }

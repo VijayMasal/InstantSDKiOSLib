@@ -13,18 +13,22 @@
 typedef NS_ENUM(NSUInteger, StepsHealthKitPermission)
 {
     ///Steps HealthKit permission fail
-    StepsHealthKitPermissionFail ,
+    StepsHealthKitPermissionFail = 0,
     ///Steps HealthKit permission successfully
-    StepsHealthKitPermissionSuccess  ,
+    StepsHealthKitPermissionSuccess = 1 ,
+    ///Ftibit enable
+    StepsHealthKitPermissionFitbitEnable = 2
     
 };
 
 typedef NS_ENUM(NSUInteger, StepsFitBitPermission)
 {
     ///Steps HealthKit permission fail
-    StepsFitBitPermissionFail ,
+    StepsFitBitPermissionFail =0,
     ///Steps HealthKit permission successfully
-    StepsFitBitPermissionSuccess  ,
+    StepsFitBitPermissionSuccess =1 ,
+    ///Healthkit is enable
+    StepsFitBitPermissionHealthKitEnable = 2
     
 };
 
@@ -45,7 +49,8 @@ typedef NS_ENUM(NSUInteger, StepsFitBitPermission)
 /*!
  *@discussion Start steps tracking using healthkit.if healthkit tracking start successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
  */
--(void)startHealthKitActivityTracking:(void(^)(StepsHealthKitPermission))handler;
+typedef void (^stepsCustomCompletionBlock)(StepsHealthKitPermission stepHealthkitPermission);
+-(void)startHealthKitActivityTracking:(stepsCustomCompletionBlock)handler;
 
 /*!
  *@discussion stop steps tracking using healthkit.if healthkit tracking stop successful handler returns Yes otherwise handler returns No.
@@ -56,7 +61,8 @@ typedef NS_ENUM(NSUInteger, StepsFitBitPermission)
 /*!
  *@discussion Start steps tracking using fitbit.if fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail.
  */
--(void)startFitBitActivityTracking:(void(^)(StepsFitBitPermission))handler;
+typedef void (^stepFitBitCustomCompletionBlock)(StepsFitBitPermission stepFitBitPermission);
+-(void)startFitBitActivityTracking:(stepFitBitCustomCompletionBlock)handler;
 
 /*!
  *@discussion stop steps tracking using fitbit.if fitbit tracking stop successful handler returns Yes otherwise handler returns No.

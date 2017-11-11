@@ -16,11 +16,11 @@
 typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 {
     ///Failed phone usage tracking
-    PhoneUsagePermissionFail,
+    PhoneUsagePermissionFail=0,
     ///phone usage tracking successfully
-    PhoneUsagePermissionSuccess ,
+    PhoneUsagePermissionSuccess =1,
    ///Passcode not enable
-    PhoneUsagePermissionPasscodeNotEnable
+    PhoneUsagePermissionPasscodeNotEnable =2
 };
 
 
@@ -44,7 +44,7 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 
 
 /*!
- * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
+ * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status PhoneUsagePermissionSuccess, if its fail handler returns PhoneUsagePermissionFail.if passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
  */
 typedef void (^PhoneUsageCustomCompletionBlock)(PhoneUsagePermission phoneUsagePermission);
 -(void)startPhoneUsageTracking:(PhoneUsageCustomCompletionBlock)handler;

@@ -43,8 +43,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 }
 
 
-/// Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
-
+/// Start device usage tracking.if deviceUsage tracking start successfully handler returns status PhoneUsagePermissionSuccess, if its fail handler returns PhoneUsagePermissionFail.if passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
 
 -(void)startPhoneUsageTracking:(PhoneUsageCustomCompletionBlock)handler;
 {

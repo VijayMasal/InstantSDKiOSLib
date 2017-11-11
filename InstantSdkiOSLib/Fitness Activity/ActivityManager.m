@@ -43,7 +43,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 
 /// Start fitness tracking using coremotion.if fintess tracking start successful handler returns FitnessActivityPermissionSuccess otherwise handler returns  FitnessActivityPermissionFail.
 
--(void)startCoreMotionActivityTracking:(void(^)(FitnessActivityPermission))handler
+-(void)startCoreMotionActivityTracking:(FitnessCustomCompletionBlock)handler
 {
     [[NSUserDefaults standardUserDefaults] setValue:@"default" forKey:@"activtiy"];
     [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"activitydate"];
