@@ -37,9 +37,10 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
 -(NSString *)cutNumberInto4DecimalPoint:(double)number;
 
 /*!
- * @discussion called to start location service using significant change location.if location service successfully start handler returns status 1 .if location permission fail handler returns 0.if phone usage is enable handler returns 2.
+ * @discussion called to start location service using significant change location.if location service successfully start handler returns status LocationPermissionSuccess .if location permission fail handler returns LocationPermissionFail.if phone usage is enable handler returns LocationPermissionPhoneUsageEnable.
  */
--(void)startSignificantLocation:(void(^)(NSInteger status))handler;
+typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locationPermission);
+-(void)startSignificantLocation:(locationPermissionCustomCompletionBlock)handler;
 
 /*!
  * @discussion called to start location service using significant change location.if start significant location service successfully returns Yes otherwise No.

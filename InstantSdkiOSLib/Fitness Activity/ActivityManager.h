@@ -35,8 +35,8 @@ typedef NS_ENUM(NSUInteger, FitnessActivityPermission)
 /*!
  *@discussion Start fitness tracking using coremotion.if fintess tracking start successful handler returns FitnessActivityPermissionSuccess otherwise handler returns  FitnessActivityPermissionFail.
  */
-typedef void (^FitnessCustomCompletionBlock)(FitnessActivityPermission fitnessPermission);
--(void)startCoreMotionActivityTracking:(FitnessCustomCompletionBlock)handler;
+typedef void (^FitnessPermissionCustomCompletionBlock)(FitnessActivityPermission fitnessPermission);
+-(void)startCoreMotionActivityTracking:(FitnessPermissionCustomCompletionBlock)handler;
 
 /*!
  *@discussion Stop fitness tracking using coremotion.if fintess tracking Stop successful handler returns Yes otherwise handler returns No.

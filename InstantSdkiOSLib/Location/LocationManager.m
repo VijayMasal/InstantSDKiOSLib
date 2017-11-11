@@ -47,23 +47,24 @@ static LocationManager *sharedLocationManager=nil;
     _locationManager=[[CLLocationManager alloc]init];
     [_locationManager requestAlwaysAuthorization];
     _locationManager.delegate=self;
- 
+ #ifdef __IPHONE_9_0
     if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)])
     {
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
     }
+    #endif
     _locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
     _locationManager.distanceFilter = 500;
     _locationManager.pausesLocationUpdatesAutomatically=NO;
     
 }
-/// called to start location service using significant change location.if location service successfully start handler returns status 1 otherwise handler returns status 0..if passcode not enable handler returns 2.
+/// start location service using significant change location.if location service successfully start handler returns status LocationPermissionSuccess .if location permission fail handler returns LocationPermissionFail.if phone usage is enable handler returns LocationPermissionPhoneUsageEnable.
 
--(void)startSignificantLocation:(void(^)(NSInteger status))handler
+-(void)startSignificantLocation:(locationPermissionCustomCompletionBlock)handler
 {  LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isOnPhoneUsage==YES)
     {
-        handler(2);
+        handler(LocationPermissionPhoneUsageEnable);
     }
     else
     {
@@ -71,13 +72,13 @@ static LocationManager *sharedLocationManager=nil;
         if (isStart==YES)
         {
             
-            handler(1);
+            handler(LocationPermissionSuccess);
             
         }
         else
         {
             
-            handler(0);
+            handler(LocationPermissionFail);
         }
     }
     

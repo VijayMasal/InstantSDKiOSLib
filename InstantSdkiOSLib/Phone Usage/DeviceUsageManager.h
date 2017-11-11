@@ -46,8 +46,8 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 /*!
  * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status PhoneUsagePermissionSuccess, if its fail handler returns PhoneUsagePermissionFail.if passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
  */
-typedef void (^PhoneUsageCustomCompletionBlock)(PhoneUsagePermission phoneUsagePermission);
--(void)startPhoneUsageTracking:(PhoneUsageCustomCompletionBlock)handler;
+typedef void (^PhoneUsagePermissionCustomCompletionBlock)(PhoneUsagePermission phoneUsagePermission);
+-(void)startPhoneUsageTracking:(PhoneUsagePermissionCustomCompletionBlock)handler;
 
 /*!
  * @discussion Start timer for getting device usage time and unlock counts.

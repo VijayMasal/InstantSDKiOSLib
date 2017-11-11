@@ -31,7 +31,7 @@ typedef NS_ENUM(NSUInteger, HealthKitSleepPermission)
     ///Sleep permission successfully
     HealthKitSleepPermissionSuccess = 1,
     ///Sleep Healthkit on
-    HealthKitSleepPermissionEnable =2,
+    HealthKitSleepPermissionDefultSleepEnable =2,
  
 };
 
@@ -49,8 +49,8 @@ typedef NS_ENUM(NSUInteger, HealthKitSleepPermission)
  * @discussion start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess otherwise handler returns SleepPermissionFail.if healthkit is on then returns SleepPermissionHealthKitEnable
  
  */
-typedef void (^DefaultSleepCustomCompletionBlock)(SleepPermission defaultSleepPermission);
--(void)startCoreMotionSleepTracking:(DefaultSleepCustomCompletionBlock)handler;
+typedef void (^DefaultSleepPermissionCustomCompletionBlock)(SleepPermission defaultSleepPermission);
+-(void)startCoreMotionSleepTracking:(DefaultSleepPermissionCustomCompletionBlock)handler;
 
 /*!
  * @discussion stop sleep tracking using CoreMotion Framework. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.
@@ -62,8 +62,8 @@ typedef void (^DefaultSleepCustomCompletionBlock)(SleepPermission defaultSleepPe
  * @discussion start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess. if permission fail handler returns SleepPermissionFail.if Default sleep is enable handler returns SleepPermissionDefaultEnable
  
  */
-typedef void (^HealthKitSleepCustomCompletionBlock)(HealthKitSleepPermission healthkitSleepPermission);
--(void)startHealthKitSleepTracking:(HealthKitSleepCustomCompletionBlock)handler;
+typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPermission healthkitSleepPermission);
+-(void)startHealthKitSleepTracking:(HealthKitSleepPermissionCustomCompletionBlock)handler;
 
 /*!
  * @discussion stop sleep tracking using HealthKit. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.

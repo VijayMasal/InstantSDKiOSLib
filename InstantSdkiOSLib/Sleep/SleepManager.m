@@ -40,7 +40,7 @@ static SleepManager *sharedSleepManager=nil;
 
 ///start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess otherwise handler returns SleepPermissionFail.if healthkit is on then returns SleepPermissionHealthKitEnable
 
--(void)startCoreMotionSleepTracking:(DefaultSleepCustomCompletionBlock)handler
+-(void)startCoreMotionSleepTracking:(DefaultSleepPermissionCustomCompletionBlock)handler
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitSleep==NO || permissions.isSleep==NO)
@@ -84,7 +84,7 @@ static SleepManager *sharedSleepManager=nil;
 
 /// start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess. if permission fail handler returns SleepPermissionFail.if Default sleep is enable handler returns SleepPermissionDefaultEnable
 
--(void)startHealthKitSleepTracking:(HealthKitSleepCustomCompletionBlock)handler
+-(void)startHealthKitSleepTracking:(HealthKitSleepPermissionCustomCompletionBlock)handler
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isDefaultSleep==NO || permissions.isSleep==NO)
@@ -110,7 +110,7 @@ static SleepManager *sharedSleepManager=nil;
     }
     else
     {
-        handler(HealthKitSleepPermissionEnable);
+        handler(HealthKitSleepPermissionDefultSleepEnable);
     }
     
 }

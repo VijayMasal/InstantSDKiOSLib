@@ -45,7 +45,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 
 /// Start device usage tracking.if deviceUsage tracking start successfully handler returns status PhoneUsagePermissionSuccess, if its fail handler returns PhoneUsagePermissionFail.if passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
 
--(void)startPhoneUsageTracking:(PhoneUsageCustomCompletionBlock)handler;
+-(void)startPhoneUsageTracking:(PhoneUsagePermissionCustomCompletionBlock)handler
 {
     BOOL passcodeEnable=[self checkPasscodeState];
     if (passcodeEnable==YES)

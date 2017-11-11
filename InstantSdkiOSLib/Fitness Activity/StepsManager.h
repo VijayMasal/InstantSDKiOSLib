@@ -49,8 +49,8 @@ typedef NS_ENUM(NSUInteger, StepsFitBitPermission)
 /*!
  *@discussion Start steps tracking using healthkit.if healthkit tracking start successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
  */
-typedef void (^stepsCustomCompletionBlock)(StepsHealthKitPermission stepHealthkitPermission);
--(void)startHealthKitActivityTracking:(stepsCustomCompletionBlock)handler;
+typedef void (^stepsPermissionCustomCompletionBlock)(StepsHealthKitPermission stepHealthkitPermission);
+-(void)startHealthKitActivityTracking:(stepsPermissionCustomCompletionBlock)handler;
 
 /*!
  *@discussion stop steps tracking using healthkit.if healthkit tracking stop successful handler returns Yes otherwise handler returns No.
@@ -61,8 +61,8 @@ typedef void (^stepsCustomCompletionBlock)(StepsHealthKitPermission stepHealthki
 /*!
  *@discussion Start steps tracking using fitbit.if fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail.
  */
-typedef void (^stepFitBitCustomCompletionBlock)(StepsFitBitPermission stepFitBitPermission);
--(void)startFitBitActivityTracking:(stepFitBitCustomCompletionBlock)handler;
+typedef void (^stepFitBitPermissionCustomCompletionBlock)(StepsFitBitPermission stepFitBitPermission);
+-(void)startFitBitActivityTracking:(stepFitBitPermissionCustomCompletionBlock)handler;
 
 /*!
  *@discussion stop steps tracking using fitbit.if fitbit tracking stop successful handler returns Yes otherwise handler returns No.
