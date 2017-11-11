@@ -46,7 +46,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 /// Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
 
 
--(void)startPhoneUsageTracking:(void(^)(PhoneUsagePermission permission))handler
+-(void)startPhoneUsageTracking:(void(^)(PhoneUsagePermission))handler;
 {
     BOOL passcodeEnable=[self checkPasscodeState];
     if (passcodeEnable==YES)
@@ -81,6 +81,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     BOOL isAuthorize= [[LocationManager sharedLocationManager] checkLocationPermission];
     if (isAuthorize==YES)
     {
+
         _timer= [NSTimer scheduledTimerWithTimeInterval:60.0f
                                                  target: self
                                                selector: @selector(methodFromTimer)
