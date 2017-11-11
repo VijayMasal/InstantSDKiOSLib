@@ -15,11 +15,11 @@
 typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 {
     ///Failed phone usage tracking
-    PhoneUsagePermissionFail,
+    PhoneUsagePermissionFail=0,
     ///phone usage tracking successfully
-    PhoneUsagePermissionSuccess ,
+    PhoneUsagePermissionSuccess =1,
    ///Passcode not enable
-    PhoneUsagePermissionPasscodeNotEnable
+    PhoneUsagePermissionPasscodeNotEnable =2
 };
 
 
