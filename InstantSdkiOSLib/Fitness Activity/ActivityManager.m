@@ -41,11 +41,10 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 }
 
 
-///Stop fitness tracking using coremotion.if fintess tracking Stop successful handler returns Yes otherwise handler returns No.
+/// Start fitness tracking using coremotion.if fintess tracking start successful handler returns FitnessActivityPermissionSuccess otherwise handler returns  FitnessActivityPermissionFail.
 
--(void)startCoreMotionActivityTracking:(void(^)(NSInteger status))handler;
+-(void)startCoreMotionActivityTracking:(void(^)(FitnessActivityPermission))handler
 {
-    
     [[NSUserDefaults standardUserDefaults] setValue:@"default" forKey:@"activtiy"];
     [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"activitydate"];
     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
@@ -76,11 +75,11 @@ static ActivityManager *sharedFitnessActivityManager=nil;
          {
              if (isActivity==YES)
              {
-                 handler(1);
+                 handler(FitnessActivityPermissionSuccess);
              }
              else
              {
-                 handler(0);
+                 handler(FitnessActivityPermissionFail);
              }
          }];
         
@@ -112,42 +111,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
         //NSDate *endDate=[NSDate date];
         [_motionActivity queryActivityStartingFromDate:startDate toDate:endDate toQueue:[NSOperationQueue new] withHandler:^(NSArray * activities, NSError *  error)
          {
-             
-             
-             if (error)
-             {
-                 
-                 
-                 if (error.code==CMErrorMotionActivityNotAuthorized)
-                 {
-                     
-                     if (self.delegate && [self.delegate respondsToSelector:@selector(showActivityPermissionAlert:alertBody:)])
-                     {
-                         [self.delegate showActivityPermissionAlert:@"Fitness permission needed" alertBody:@"You need to enable permissions for fitness data \n Settings > Privacy > Motion and Fitness > InstantSDK"];
-                     }
-                 }
-                 
-                 if (error.code==CMErrorMotionActivityNotEntitled)
-                 {
-                     
-                     if (self.delegate && [self.delegate respondsToSelector:@selector(showActivityPermissionAlert:alertBody:)])
-                     {
-                         [self.delegate showActivityPermissionAlert:@"Fitness permission needed" alertBody:@"You need to enable permissions for fitness data"];
-                     }
-                 }
-                 
-                 if (error.code==CMErrorMotionActivityNotAvailable)
-                 {
-                     
-                     if (self.delegate && [self.delegate respondsToSelector:@selector(showActivityPermissionAlert:alertBody:)])
-                     {
-                         [self.delegate showActivityPermissionAlert:@"Fitness permission needed" alertBody:@"You need to enable permissions for fitness data"];
-                     }
-                 }
-                 
-             }
-             else
-             {
+          
                  if (activities)
                  {
                      
@@ -156,14 +120,10 @@ static ActivityManager *sharedFitnessActivityManager=nil;
                       {
                           
                       }];
-                     
-                     
+                   
                  }
-             }
-             
-             
-         }];
-                       });
+            
+         }];   });
         
     }
 }
@@ -182,33 +142,12 @@ static ActivityManager *sharedFitnessActivityManager=nil;
          {
              
              
-             if (error.code==CMErrorMotionActivityNotAuthorized)
+             if (error.code==CMErrorMotionActivityNotAuthorized || error.code==CMErrorMotionActivityNotEntitled || error.code==CMErrorMotionActivityNotAvailable)
              {
                  
-                 if (self.delegate && [self.delegate respondsToSelector:@selector(showActivityPermissionAlert:alertBody:)])
-                 {
-                     [self.delegate showActivityPermissionAlert:@"Fitness permission needed" alertBody:@"You need to enable permissions for fitness data \n Settings > Privacy > Motion and Fitness > InstantSDK"];
-                 }
+               activityData(NO);
              }
-             
-             if (error.code==CMErrorMotionActivityNotEntitled)
-             {
-                 
-                 if (self.delegate && [self.delegate respondsToSelector:@selector(showActivityPermissionAlert:alertBody:)])
-                 {
-                     [self.delegate showActivityPermissionAlert:@"Fitness permission needed" alertBody:@"You need to enable permissions for fitness data"];
-                 }
-             }
-             
-             if (error.code==CMErrorMotionActivityNotAvailable)
-             {
-                 
-                 if (self.delegate && [self.delegate respondsToSelector:@selector(showActivityPermissionAlert:alertBody:)])
-                 {
-                     [self.delegate showActivityPermissionAlert:@"Fitness permission needed" alertBody:@"You need to enable permissions for fitness data"];
-                 }
-             }
-             activityData(NO);
+           
          }
          else
          {
@@ -354,28 +293,12 @@ static ActivityManager *sharedFitnessActivityManager=nil;
             
             
         }
-        //        if (!endDate)
-        //        {
-        //            endDate=[self StartTime:currentDate];
-        //        }
-        //
-        //
-        //        [self insertAndUpdateFitnessDatawalkTime:totalWalkingTime runTime:totalRuningTime travelTime:totalTravellingTime stationaryTime:totalStationaryTime cyclingTime:totalcyclingTime steps:totalFSteps activityDate:[[InstantDataBase sharedInstantDataBase] date:endDate] withCallBackHandler:^(BOOL isinsert)
-        //        {
-        //            block(isinsert);
-        //        }];
+       
         
         
         
     }
-    else
-    {
-        //
-        //        [self insertAndUpdateFitnessDatawalkTime:totalWalkingTime runTime:totalRuningTime travelTime:totalTravellingTime stationaryTime:totalStationaryTime cyclingTime:totalcyclingTime steps:totalFSteps activityDate:[[InstantDataBase sharedInstantDataBase] date:currentDate] withCallBackHandler:^(BOOL isinsert) {
-        //             block(isinsert);
-        //        }];
-        
-    }
+    
     
 }
 

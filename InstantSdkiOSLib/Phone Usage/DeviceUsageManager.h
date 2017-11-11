@@ -12,15 +12,17 @@
 #import "LocationNameAndTime.h"
 
 
-@protocol  DeviceUsageDelegate ;
-typedef NS_ENUM(NSUInteger, phoneUsagePermission){
-    ///phone usage tracking successfully
-    PhoneUsageTrackingSuccess  = 1,
+typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
+{
     ///Failed phone usage tracking
-    PhoneUsageTrackingFail   = 0,
+    PhoneUsagePermissionFail,
+    ///phone usage tracking successfully
+    PhoneUsagePermissionSuccess ,
    ///Passcode not enable
-    PasscodeNotEnable  = 2
+    PhoneUsagePermissionPasscodeNotEnable
 };
+
+
 @interface DeviceUsageManager : NSObject
 
 {
@@ -41,7 +43,7 @@ typedef NS_ENUM(NSUInteger, phoneUsagePermission){
 /*!
  * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
  */
--(void)startPhoneUsageTracking:(void(^)(phoneUsagePermission))handler;
+-(void)startPhoneUsageTracking:(void(^)(PhoneUsagePermission))handler;
 /*!
  * @discussion Start timer for getting device usage time and unlock counts.
  */
@@ -76,14 +78,7 @@ typedef NS_ENUM(NSUInteger, phoneUsagePermission){
  * @discussion insert fitness activity and sleep data on app launch, app moves from backgorund to foreground and date change into fitness and sleep table.
  */
 -(void)InsertFitnessAndSleepRecord;
-
-@property(weak,nonatomic)id<DeviceUsageDelegate> delegate;
 @end
 
-@protocol DeviceUsageDelegate <NSObject>
 
-@optional
--(void)showDeviceUsageData:(LocationNameAndTime *)deviceUsageData  ;
-
-@end
 

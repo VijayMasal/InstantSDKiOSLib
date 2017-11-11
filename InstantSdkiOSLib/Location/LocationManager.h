@@ -9,11 +9,17 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "InstantDataBase.h"
-/*!
- * @discussion ShowLocationPermissionAlertDelegate protocal used when location service not enabled or denied or restricted then shows location permission alert on view.
- */
 
-@protocol showLocationPermissionAlertDelegate;
+typedef NS_ENUM(NSUInteger, LocationPermission)
+{
+    ///location permission fail
+    LocationPermissionFail =0,
+    ///location permission successfully
+    LocationPermissionSuccess =1 ,
+    ///phone usage enable
+    LocationPermissionPhoneUsageEnable =2
+};
+
 static NSString * const lastlocationdatekey=@"lastlocationdate";
 @interface LocationManager : NSObject<CLLocationManagerDelegate>
 /*!
@@ -31,7 +37,7 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
 -(NSString *)cutNumberInto4DecimalPoint:(double)number;
 
 /*!
- * @discussion called to start location service using significant change location.if location service successfully start handler returns status 1 .if location permission fail handler returns 2.if phone usage is enable handler returns 3.
+ * @discussion called to start location service using significant change location.if location service successfully start handler returns status 1 .if location permission fail handler returns 0.if phone usage is enable handler returns 2.
  */
 -(void)startSignificantLocation:(void(^)(NSInteger status))handler;
 
@@ -100,21 +106,10 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
  */
 -(BOOL)checkLocationPermission;
 
-@property(weak,nonatomic)id<showLocationPermissionAlertDelegate>delegate;
+
 
 @end
 
-@protocol showLocationPermissionAlertDelegate<NSObject>
 
-@optional
-/*!
- * @discussion location permission not enabled or denied or restricted then shows location permission alert on view.
- * @param alertTitle  alerttitle have title of alert .
- * @param alertBody alert message .
- 
- */
 
--(void)showPermissionAlert:(NSString *)alertTitle alertBody:(NSString *)alertBody;
-
-@end
 

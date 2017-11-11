@@ -11,7 +11,20 @@
 #import <HealthKit/HealthKit.h>
 #import "LocationNameAndTime.h"
 
-@protocol SleepManagerDelegate;
+typedef NS_ENUM(NSUInteger, SleepPermission)
+{
+    ///Sleep permission fail
+    SleepPermissionFail ,
+    ///Sleep permission successfully
+    SleepPermissionSuccess,
+    ///Sleep Healthkit on
+    SleepPermissionHealthKitEnable,
+    
+    ///Core motion sleep enable
+    SleepPermissionDefaultEnable
+   
+};
+
 @interface SleepManager : NSObject<NSURLSessionDelegate>
 /*!
  * @discussion Creates sleep manager singletone class. It has all sleep related information. It can be accessed anywhere in application.
@@ -23,10 +36,10 @@
 
 
 /*!
- * @discussion start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns 1 otherwise handler returns 0.
+ * @discussion start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess otherwise handler returns SleepPermissionFail.if healthkit is on then returns SleepPermissionHealthKitEnable
  
  */
--(void)startCoreMotionSleepTracking:(void(^)(NSInteger status))handler;
+-(void)startCoreMotionSleepTracking:(void(^)(SleepPermission))handler;
 
 /*!
  * @discussion stop sleep tracking using CoreMotion Framework. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.
@@ -35,13 +48,13 @@
 -(void)stopCoreMotionSleepTracking:(void(^)(BOOL isStop))handler;
 
 /*!
- * @discussion start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns 1 otherwise handler returns 0.
+ * @discussion start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess. if permission fail handler returns SleepPermissionFail.if Default sleep is enable handler returns SleepPermissionDefaultEnable
  
  */
--(void)startHealthKitSleepTracking:(void(^)(NSInteger status))handler;
+-(void)startHealthKitSleepTracking:(void(^)(SleepPermission))handler;
 
 /*!
- * @discussion stop sleep tracking using HealthKit. if stop sleep tracking successfully handler returns 1 otherwise handler returns 0.
+ * @discussion stop sleep tracking using HealthKit. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.
  
  */
 -(void)stopHealthKitSleepTracking:(void(^)(BOOL isStop))handler;
@@ -125,19 +138,7 @@
 
 -(NSDate *)nextMidNight:(NSDate *)date;
 
-/*!
- * @discussion activity custome delegate for showing permission alert on UI .
- 
- */
-
-@property(nonatomic,weak)id<SleepManagerDelegate> delegate;
-@end
-
-@protocol SleepManagerDelegate <NSObject>
-
-@optional
--(void)showSleepData:(LocationNameAndTime *)sleepData;
-
--(void)showSleepPermissionAlert:(NSString *)alertTitle alertBody:(NSString *)alertBody;
 
 @end
+
+

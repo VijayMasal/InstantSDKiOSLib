@@ -39,9 +39,10 @@ static StepsManager *sharedStepsManager=nil;
     return self;
 }
 
-/// Start steps tracking using healthkit.if healthkit tracking start successful handler returns 1 otherwise handler returns 0.
--(void)startHealthKitActivityTracking:(void(^)(NSInteger status))handler
+/// Start steps tracking using healthkit.if healthkit tracking start successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
+-(void)startHealthKitActivityTracking:(void(^)(StepsHealthKitPermission))handler
 {
+
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isFitBitActivity==NO || permissions.isCustomeActivity==NO)
     {
@@ -66,12 +67,12 @@ static StepsManager *sharedStepsManager=nil;
                  permissions.isHealthKitActivity=YES;
                  [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
                  
-                 handler(1);
+                 handler(StepsHealthKitPermissionSuccess);
              }
              else
              {
                  permissions.isHealthKitActivity=NO;
-                 handler(0);
+                 handler(StepsHealthKitPermissionFail);
              }
             
          }];
@@ -79,7 +80,7 @@ static StepsManager *sharedStepsManager=nil;
         else
         {
             permissions.isHealthKitActivity=NO;
-            handler(0);
+            handler(StepsHealthKitPermissionFail);
         }
         
         
@@ -88,7 +89,7 @@ static StepsManager *sharedStepsManager=nil;
     else
     {
         permissions.isHealthKitActivity=NO;
-        handler(0);
+        handler(StepsHealthKitPermissionFail);
         
     }
         
@@ -107,9 +108,9 @@ static StepsManager *sharedStepsManager=nil;
 }
 
 
-/// Start steps tracking using fitbit.if fitbit tracking start successful handler returns 1 otherwise handler returns 0.
+/// Start steps tracking using fitbit.if fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail.
 
--(void)startFitBitActivityTracking:(void(^)(NSInteger status))handler
+-(void)startFitBitActivityTracking:(void(^)(StepsFitBitPermission))handler;
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitActivity==NO || permissions.isCustomeActivity==NO)
@@ -121,13 +122,13 @@ static StepsManager *sharedStepsManager=nil;
         });
         permissions.isFitBitActivity=YES;
         
-        handler(1);
+        handler(StepsFitBitPermissionSuccess);
         
     }
     else
     {
         
-        handler(0);
+        handler(StepsHealthKitPermissionFail);
     }
     
 }

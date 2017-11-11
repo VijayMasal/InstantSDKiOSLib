@@ -10,7 +10,15 @@
 #import <CoreMotion/CoreMotion.h>
 #import "LocationManager.h"
 
-@protocol showActivityPermissionAlertDelegate;
+typedef NS_ENUM(NSUInteger, FitnessActivityPermission)
+{
+    ///Fitness activity permission fail
+    FitnessActivityPermissionFail ,
+    ///Fitness activity permission successfully
+    FitnessActivityPermissionSuccess  ,
+    
+};
+
 @interface ActivityManager : NSObject<NSURLSessionDelegate>
 {
     __block NSNumber *totalSteps;
@@ -25,9 +33,9 @@
 @property(strong,nonatomic) CMPedometer *stepspedometer;
 
 /*!
- *@discussion Start fitness tracking using coremotion.if fintess tracking start successful handler returns 1 otherwise handler returns 0.
+ *@discussion Start fitness tracking using coremotion.if fintess tracking start successful handler returns FitnessActivityPermissionSuccess otherwise handler returns  FitnessActivityPermissionFail.
  */
--(void)startCoreMotionActivityTracking:(void(^)(NSInteger status))handler;
+-(void)startCoreMotionActivityTracking:(void(^)(FitnessActivityPermission))handler;
 
 /*!
  *@discussion Stop fitness tracking using coremotion.if fintess tracking Stop successful handler returns Yes otherwise handler returns No.
@@ -84,16 +92,8 @@
 
 -(NSDate *)nextMidNight:(NSDate *)date;
 
-/*!
- * @discussion activity custome delegate for showing permission alert on UI .
- 
- */
-@property(nonatomic,weak)id<showActivityPermissionAlertDelegate>delegate;
-@end
-
-@protocol showActivityPermissionAlertDelegate <NSObject>
-
--(void)showActivityPermissionAlert:(NSString *)alertTitle alertBody:(NSString *)alertBody;
 
 @end
+
+
 

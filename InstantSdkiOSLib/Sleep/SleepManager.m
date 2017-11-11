@@ -38,9 +38,9 @@ static SleepManager *sharedSleepManager=nil;
     return self;
 }
 
-/// start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns 1 otherwise handler returns 0.
+///start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess otherwise handler returns SleepPermissionFail.if healthkit is on then returns SleepPermissionHealthKitEnable
 
--(void)startCoreMotionSleepTracking:(void(^)(NSInteger status))handler
+-(void)startCoreMotionSleepTracking:(void(^)(SleepPermission))handler;
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitSleep==NO || permissions.isSleep==NO)
@@ -54,17 +54,17 @@ static SleepManager *sharedSleepManager=nil;
                      [[NSUserDefaults standardUserDefaults] setValue:@"default" forKey:@"sleep"];
                      [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"sleepdate"];
                  });
-                 handler(1);
+                 handler(SleepPermissionSuccess);
              }
              else
              {
-                 handler(0);
+                 handler(SleepPermissionFail);
              }
          }];
     }
     else
     {
-        handler(2);
+        handler(SleepPermissionHealthKitEnable);
     }
     
 }
@@ -82,9 +82,9 @@ static SleepManager *sharedSleepManager=nil;
     handler(YES);
 }
 
-/// start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns 1 otherwise handler returns 0.
+/// start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess. if permission fail handler returns SleepPermissionFail.if Default sleep is enable handler returns SleepPermissionDefaultEnable
 
--(void)startHealthKitSleepTracking:(void(^)(NSInteger status))handler
+-(void)startHealthKitSleepTracking:(void(^)(SleepPermission))handler;
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isDefaultSleep==NO || permissions.isSleep==NO)
@@ -99,23 +99,23 @@ static SleepManager *sharedSleepManager=nil;
                  });
                  
                  [[SleepManager sharedSleepManager] getSleepOptionAndFindSleepDataFromStartTime:[NSDate date] toEndTime:[NSDate date]];
-                 handler(1);
+                 handler(SleepPermissionSuccess);
              }
              else
              {
-                 handler(0);
+                 handler(SleepPermissionFail);
              }
              
          }];
     }
     else
     {
-        handler(2);
+        handler(SleepPermissionDefaultEnable);
     }
     
 }
 
-/// stop sleep tracking using HealthKit. if stop sleep tracking successfully handler returns 1 otherwise handler returns 0.
+/// stop sleep tracking using HealthKit. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.
 
 -(void)stopHealthKitSleepTracking:(void(^)(BOOL isStop))handler
 {
@@ -174,20 +174,12 @@ static SleepManager *sharedSleepManager=nil;
              if (error.code==CMErrorMotionActivityNotAuthorized)
              {
                  isPermission=NO;
-                 if (self.delegate && [self.delegate respondsToSelector:@selector(showSleepPermissionAlert:alertBody:)])
-                 {
-                     [self.delegate showSleepPermissionAlert:@"Sleep permission needed" alertBody:@"You need to enable permissions for Sleep data \n Settings > Privacy > Motion and Fitness > InstantSDK"];
-                 }
                  sleepActivity(isPermission);
              }
              
              if (error.code==CMErrorMotionActivityNotAvailable)
              {
                  isPermission=NO;
-                 if (self.delegate && [self.delegate respondsToSelector:@selector(showSleepPermissionAlert:alertBody:)])
-                 {
-                     [self.delegate showSleepPermissionAlert:@"Sleep permission needed" alertBody:@"You need to enable permissions for Sleep data \n Settings > Privacy > Motion and Fitness > InstantSDK"];
-                 }
                  sleepActivity(isPermission);
              }
              
@@ -398,7 +390,11 @@ static SleepManager *sharedSleepManager=nil;
                                          readTypes:readObjectTypes
                                         completion:^(BOOL success, NSError *  error)
      {
-         permissionHandler(success);
+        
+             permissionHandler(success);
+        
+        
+         
      }];
     
 }

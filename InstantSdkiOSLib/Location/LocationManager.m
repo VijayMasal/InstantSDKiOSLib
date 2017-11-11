@@ -12,8 +12,6 @@
 #import "ActivityManager.h"
 #import "SleepManager.h"
 #import "StepsManager.h"
-#define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
-
 @implementation LocationManager
 /// Creates location manager singletone class. That class manages all location related information like location name, time, latitude, longitude and date.
 static LocationManager *sharedLocationManager=nil;
@@ -49,6 +47,7 @@ static LocationManager *sharedLocationManager=nil;
     _locationManager=[[CLLocationManager alloc]init];
     [_locationManager requestAlwaysAuthorization];
     _locationManager.delegate=self;
+ 
     if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)])
     {
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
@@ -146,10 +145,7 @@ static LocationManager *sharedLocationManager=nil;
     {
         isAuthorize=NO;
         //if loaction service not enabled then show location permission alert on view
-        if (self.delegate && [self.delegate respondsToSelector:@selector(showPermissionAlert:alertBody:)])
-        {
-            [self.delegate showPermissionAlert:@"Location Permission Denied" alertBody:@"Location permission needed to run app in background & fetch places data"];
-        }
+        
         
     } else
     {
@@ -158,12 +154,7 @@ static LocationManager *sharedLocationManager=nil;
         if(authorizationStatus == kCLAuthorizationStatusDenied || authorizationStatus == kCLAuthorizationStatusRestricted)
         {
             isAuthorize=NO;
-            //if loaction service authorization denied or restricted then show location permission alert on view
-            if (self.delegate && [self.delegate respondsToSelector:@selector(showPermissionAlert:alertBody:)])
-            {
-                [self.delegate showPermissionAlert:@"Location Permission Denied" alertBody:@"Location permission needed to run app in background & fetch places data"];
-                
-            }
+            
         }
         else
         {

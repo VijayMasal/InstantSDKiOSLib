@@ -10,6 +10,25 @@
 #import <CoreMotion/CoreMotion.h>
 #import <HealthKit/HealthKit.h>
 
+typedef NS_ENUM(NSUInteger, StepsHealthKitPermission)
+{
+    ///Steps HealthKit permission fail
+    StepsHealthKitPermissionFail ,
+    ///Steps HealthKit permission successfully
+    StepsHealthKitPermissionSuccess  ,
+    
+};
+
+typedef NS_ENUM(NSUInteger, StepsFitBitPermission)
+{
+    ///Steps HealthKit permission fail
+    StepsFitBitPermissionFail ,
+    ///Steps HealthKit permission successfully
+    StepsFitBitPermissionSuccess  ,
+    
+};
+
+
 @interface StepsManager : NSObject<NSURLSessionDelegate>
 {
     __block NSNumber *totalSteps;
@@ -24,9 +43,9 @@
 
 
 /*!
- *@discussion Start steps tracking using healthkit.if healthkit tracking start successful handler returns 1 otherwise handler returns 0.
+ *@discussion Start steps tracking using healthkit.if healthkit tracking start successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
  */
--(void)startHealthKitActivityTracking:(void(^)(NSInteger status))handler;
+-(void)startHealthKitActivityTracking:(void(^)(StepsHealthKitPermission))handler;
 
 /*!
  *@discussion stop steps tracking using healthkit.if healthkit tracking stop successful handler returns Yes otherwise handler returns No.
@@ -35,9 +54,9 @@
 
 
 /*!
- *@discussion Start steps tracking using fitbit.if fitbit tracking start successful handler returns 1 otherwise handler returns 0.
+ *@discussion Start steps tracking using fitbit.if fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail.
  */
--(void)startFitBitActivityTracking:(void(^)(NSInteger status))handler;
+-(void)startFitBitActivityTracking:(void(^)(StepsFitBitPermission))handler;
 
 /*!
  *@discussion stop steps tracking using fitbit.if fitbit tracking stop successful handler returns Yes otherwise handler returns No.

@@ -46,7 +46,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 /// Start device usage tracking.if deviceUsage tracking start successfully handler returns status 1, if its fail handler returns 0.if passcode not enable handler returns 2.
 
 
--(void)startPhoneUsageTracking:(void(^)(phoneUsagePermission))handler;
+-(void)startPhoneUsageTracking:(void(^)(PhoneUsagePermission))handler
 {
     BOOL passcodeEnable=[self checkPasscodeState];
     if (passcodeEnable==YES)
@@ -56,17 +56,17 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
         if (isStart==YES)
         {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastLocation"];
-            handler(PhoneUsageTrackingSuccess);
+            handler(PhoneUsagePermissionSuccess);
         }
         else
         {
-            handler(PhoneUsageTrackingFail);
+            handler(PhoneUsagePermissionFail);
             
         }
     }
     else
     {
-        handler(PasscodeNotEnable);
+        handler(PhoneUsagePermissionPasscodeNotEnable);
     }
     
     
@@ -77,10 +77,10 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 -(BOOL)startTimer
 {
     [self setNotificationObserverForDeviceState];
+      [[LocationManager sharedLocationManager]startStanderedLocation];
     BOOL isAuthorize= [[LocationManager sharedLocationManager] checkLocationPermission];
     if (isAuthorize==YES)
     {
-        [[LocationManager sharedLocationManager]startStanderedLocation];
         _timer= [NSTimer scheduledTimerWithTimeInterval:60.0f
                                                  target: self
                                                selector: @selector(methodFromTimer)
@@ -92,7 +92,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
 }
 
-/// Stop device usage tracking.if deviceUsage tracking stop successfully handler returns status 1, if its fail handler returns 0.
+/// Stop device usage tracking.if deviceUsage tracking stop successfully handler returns status Yes, if its fail handler returns .
 
 -(void)stopPhoneUsageTracking:(void(^)(BOOL isStop))handler
 {

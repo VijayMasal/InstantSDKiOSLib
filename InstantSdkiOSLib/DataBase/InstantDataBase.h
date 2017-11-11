@@ -10,7 +10,7 @@
 #import <sqlite3.h>
 #import "LocationNameAndTime.h"
 
-@protocol locationReloadDelegate;
+
 static NSString * const placenamekey=@"placename";
 /*!
  * @discussion InstantDataBase is singletone class that can be accessed anywhere in application. In InstantDataBase class a database file is created in document directory and also a placeTable and FitnessTable is created in the database, getting database path, checking if the database exists or not, checking if the database open or not, InstantDataBase class inserts and selects place data and also returns all location infromation to LocationNameAndTime. InstantDataBase class is also doing selection and insertion operations on fitness table of the database.
@@ -307,19 +307,6 @@ static NSString * const placenamekey=@"placename";
  * @discussion Get fitbit token for fetching data from fitbit.
  */
 -(void)FitBitOpenUrl:(NSURL *)url;
-
-#pragma mark - InstantDataBase Delegate methods for updating UI
-/*!
- * @discussion called after selecting placename, placetime, latitude, longitude, timestamp and date from place table locationReloadDelegate is showing placename, placetime, date from LocationNameAndTime to tableview on UI.
- */
-
-@property(nonatomic,weak)id<locationReloadDelegate>delegate;
-@end
-
-@protocol locationReloadDelegate <NSObject>
-
--(void)ReloadLocationTable:(LocationNameAndTime *)locationData;
-
 
 
 @end
