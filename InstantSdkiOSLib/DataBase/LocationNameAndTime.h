@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 /*!
- * @discussion LocationNameAndTime store all location and fitness data. In the location part placename, placeIds, placeTimes, placesAllDates and placeRecord. The place record contains placename, placetime, latitude, longitude, timeStamp and place dates
+ * @discussion LocationNameAndTime stores all location and fitness data. In the location part placename, placeIds, placeTimes, placesAllDates and placeRecord. The place record contains placename, placetime, latitude, longitude, timeStamp and place dates
  In fitness part have stored all dates, walktime,runtime,traveltime,stationarytime,cycletime,steps.
  LocationNameAndTime can be accsessed anywhere in application.
  

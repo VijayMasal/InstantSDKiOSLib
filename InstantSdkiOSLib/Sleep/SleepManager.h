@@ -4,7 +4,7 @@
 //
 //  Created by Emberify_Vijay on 18/09/17.
 //  Copyright © 2017 Emberify. All rights reserved.
-//
+//  Reviewed on 13/11/17
 
 #import <Foundation/Foundation.h>
 #import <CoreMotion/CoreMotion.h>
@@ -19,9 +19,7 @@ typedef NS_ENUM(NSUInteger, SleepPermission)
     SleepPermissionSuccess = 1,
     ///Sleep Healthkit on
     SleepPermissionHealthKitEnable =2,
-    
-
-   
+  
 };
 
 typedef NS_ENUM(NSUInteger, HealthKitSleepPermission)
@@ -46,33 +44,33 @@ typedef NS_ENUM(NSUInteger, HealthKitSleepPermission)
 
 
 /*!
- * @discussion start sleep tracking using CoreMotion Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess otherwise handler returns SleepPermissionFail.if healthkit is on then returns SleepPermissionHealthKitEnable
+ * @discussion Starts sleep tracking using CoreMotion Framework. If it starts sleep tracking successfully handler returns SleepPermissionSuccess otherwise handler returns SleepPermissionFail. If healthkit is on then returns SleepPermissionHealthKitEnable
  
  */
 typedef void (^DefaultSleepPermissionCustomCompletionBlock)(SleepPermission defaultSleepPermission);
 -(void)startCoreMotionSleepTracking:(DefaultSleepPermissionCustomCompletionBlock)handler;
 
 /*!
- * @discussion stop sleep tracking using CoreMotion Framework. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.
+ * @discussion Stops sleep tracking using CoreMotion Framework. If stop sleep tracking successfully handler returns Yes otherwise handler returns No.
  
  */
 -(void)stopCoreMotionSleepTracking:(void(^)(BOOL isStop))handler;
 
 /*!
- * @discussion start sleep tracking using HealthKit Framework. if start sleep tracking successfully handler returns SleepPermissionSuccess. if permission fail handler returns SleepPermissionFail.if Default sleep is enable handler returns SleepPermissionDefaultEnable
+ * @discussion Starts sleep tracking using HealthKit Framework. If sleep tracking starts successfully handler returns SleepPermissionSuccess. If permission fails handler returns SleepPermissionFail. If Default sleep is enabled handler returns SleepPermissionDefaultEnable
  
  */
 typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPermission healthkitSleepPermission);
 -(void)startHealthKitSleepTracking:(HealthKitSleepPermissionCustomCompletionBlock)handler;
 
 /*!
- * @discussion stop sleep tracking using HealthKit. if stop sleep tracking successfully handler returns Yes otherwise handler returns No.
+ * @discussion Stops sleep tracking using HealthKit. If sleep tracking stops successfully handler returns Yes otherwise handler returns No.
  
  */
 -(void)stopHealthKitSleepTracking:(void(^)(BOOL isStop))handler;
 
 /*!
- * @discussion Get sleep data from CoreMotion framework using passed start time and end time.if get sleep data array then returns YES otherwise NO
+ * @discussion Gets sleep data from CoreMotion framework using passed start time and end time. If get sleep data array then returns YES otherwise NO
  * @param startTime passing sleep start date and time.
  * @param endTime passing sleep end date and time.
  */
@@ -80,7 +78,7 @@ typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPerm
 
 
 /*!
- * @discussion Get sleep time from sleep data using passed start time and end time.insert and update sleep record in sleep table .if calculate sleep time successfully returns YES otherwise NO.
+ * @discussion Gets sleep time from sleep data using passed start time and end time. Inserts and update sleep record in sleep table. If sleep time is calculated successfully returns YES otherwise NO.
  * @param startTime passing sleep start date and time.
  * @param endTime passing sleep end date and time.
  */
@@ -88,14 +86,14 @@ typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPerm
 
 
 /*!
- * @discussion Get enable sleep option and pasrse sleep data of selected option.
+ * @discussion Enables sleep option and parses sleep data of selected date.
  * @param startTime passing sleep start date and time.
  * @param toEndTime passing sleep end date and time.
  */
 -(void)getSleepOptionAndFindSleepDataFromStartTime:(NSDate *)startTime toEndTime:(NSDate *)toEndTime;
 
 /*!
- * @discussion Create dictionary of date, total sleep time, sleepAt, wokeUpAt, inBetweenDuration, countInBetween, zeroSleep for inserting or update into sleep table of database.
+ * @discussion Creates dictionary of date, total sleep time, sleepAt, wokeUpAt, inBetweenDuration, countInBetween, zeroSleep for inserting or update into sleep table of database.
  * @param date passing sleep date.
  * @param totalSleepTime passing total sleep time.
  * @param sleepAtTime passing sleepAt time.
@@ -108,13 +106,13 @@ typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPerm
 #pragma mark -HealthKit
 
 /*!
- * @discussion Get healthkit permission for parsing sleep data from healthkit.
+ * @discussion Gets healthkit permission for parsing sleep data from healthkit.
  */
 -(void)healthKitPermission:(void(^)(BOOL healthKitPermission))permissionHandler;
 
 
 /*!
- * @discussion Get sleep data from healthKit framework using passed start time and end time.if get sleep data array then returns YES otherwise NO
+ * @discussion Gets sleep data from healthKit framework using passed start time and end time. If sleep data array exists then returns YES otherwise NO
  * @param startTime passing sleep start date and time.
  * @param endTime passing sleep end date and time.
  */
@@ -123,27 +121,27 @@ typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPerm
 
 #pragma mark -FitBit
 /*!
- * @discussion Get sleep data from FitBit framework using passed start time.if get sleep data array then returns YES otherwise NO
+ * @discussion Gets sleep data from FitBit framework using passed start time. If get sleep data array then returns YES otherwise NO
  * @param startTime passing sleep start date and time.
  */
 -(void)getSleepDataUsingFitBit:(NSDate *)startTime  withCallBack:(void(^)(BOOL  isSleepData))FitBitSleepActivity;
 
 /*!
- * @discussion getting n number of days of sleep and insert n number of sleep  data into sleep table
+ * @discussion Gets n number of days of sleep and insert n number of sleep  data into sleep table
  
  */
 -(void)getNNumberOfSleepData;
 
 
 /*!
- * @discussion finding a last midnight using passed date.
+ * @discussion Finds a last midnight using passed date.
  * @param date .
  * @return midnight date using passed date.
  */
 -(NSDate *)midNightOfLastNight :(NSDate *)date;
 
 /*!
- * @discussion find next midnight using passed date.
+ * @discussion Finds next midnight using passed date.
  * @param date .
  * @return next midnight using passed date.
  */

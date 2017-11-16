@@ -4,7 +4,7 @@
 //
 //  Created by Emberify_Vijay on 10/10/17.
 //  Copyright © 2017 Emberify. All rights reserved.
-//
+//  Reviewed on 12/11/17
 
 #import "StepsManager.h"
 #import <HealthKit/HealthKit.h>
@@ -39,7 +39,7 @@ static StepsManager *sharedStepsManager=nil;
     return self;
 }
 
-/// Start steps tracking using healthkit.if healthkit tracking start successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
+/// Start steps tracking using healthkit. If healthkit tracking starts successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
 -(void)startHealthKitActivityTracking:(stepsPermissionCustomCompletionBlock)handler
 {
 
@@ -89,7 +89,7 @@ static StepsManager *sharedStepsManager=nil;
     else
     {
         permissions.isHealthKitActivity=NO;
-        handler(StepsHealthKitPermissionFail);
+        handler(StepsHealthKitPermissionFitbitEnable);
         
     }
         
@@ -97,7 +97,7 @@ static StepsManager *sharedStepsManager=nil;
 }
 
 
-/// stop steps tracking using healthkit.if healthkit tracking stop successful handler returns Yes otherwise handler returns No.
+/// Stops steps tracking using healthkit. If healthkit tracking stops successful handler returns Yes otherwise handler returns No.
 -(void)stopHealthKitActivityTracking:(void(^)(BOOL isStop))handler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -108,14 +108,25 @@ static StepsManager *sharedStepsManager=nil;
 }
 
 
-/// Start steps tracking using fitbit.if fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail.
+/// Starts steps tracking using fitbit. If fitbit tracking start successful handler returns StepsFitBitPermissionSuccess otherwise handler returns StepsFitBitPermissionFail. IMP: The redirect URL and client ID need to be changed here.
 
 -(void)startFitBitActivityTracking:(stepFitBitPermissionCustomCompletionBlock)handler
 {
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitActivity==NO || permissions.isCustomeActivity==NO)
     {
-        [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"] options:@{} completionHandler:nil];
+        if (@available(iOS 9.0, *)) {
+           [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"]];
+            
+        }
+        else
+        {
+         
+            [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"] options:@{} completionHandler:nil];
+        }
+        
+        
+        
         [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSUserDefaults standardUserDefaults] setValue:@"fitbit" forKey:@"customeactivtiy"];
@@ -128,12 +139,12 @@ static StepsManager *sharedStepsManager=nil;
     else
     {
         
-        handler(StepsFitBitPermissionFail);
+        handler(StepsFitBitPermissionHealthKitEnable);
     }
     
 }
 
-/// stop steps tracking using fitbit.if fitbit tracking stop successful handler returns Yes otherwise handler returns No.
+/// Stops steps tracking using fitbit.if fitbit tracking stop successful handler returns Yes otherwise handler returns No.
 
 -(void)stopFitBitActivityTracking:(void(^)(BOOL isStop))handler
 {
@@ -159,7 +170,7 @@ static StepsManager *sharedStepsManager=nil;
     
     if (activityType.isHealthKitActivity==YES)
     {
-        //Get activity like steps count, walking, travelling, running, cycling from healthkit framework
+        //Gets activity like steps count, walking, travelling, running, cycling from healthkit framework
         [self getStepsFromHealthKitStartDate:startDate endDate:endDate withCallBackHandler:^(NSInteger stepsCount)
          {
              if ([activityType.stepsAllDates containsObject:[[InstantDataBase sharedInstantDataBase]date:startDate]])
@@ -182,7 +193,7 @@ static StepsManager *sharedStepsManager=nil;
     }
     else if (activityType.isFitBitActivity==YES)
     {
-        //Get activity like steps count, walking, travelling, running, cycling from fitbit
+        //Gets activity like steps count, walking, travelling, running, cycling from fitbit
         [self getStepsFromFitBitStartDate:startDate endDate:endDate withCallBackHandler:^(NSInteger stepsCount)
          {
              if ([activityType.stepsAllDates containsObject:[[InstantDataBase sharedInstantDataBase]date:startDate]])
@@ -205,7 +216,7 @@ static StepsManager *sharedStepsManager=nil;
     }
     else if (activityType.isDefaultActivity==YES)
     {
-        //Get activity like steps count, walking, travelling, running, cycling from coremotion framework
+        //Gets activity like steps count, walking, travelling, running, cycling from coremotion framework
         [self getStepsFromCoreMotionStartDate:startDate endDate:endDate withCallBackHandler:^(NSInteger stepsCount)
          {
              if ([activityType.stepsAllDates containsObject:[[InstantDataBase sharedInstantDataBase]date:startDate]])
@@ -231,7 +242,7 @@ static StepsManager *sharedStepsManager=nil;
     
 }
 
-///Gets the total number of steps for today using CoreMotion framework CMPedometer object passing start date  (last mid night date) and end date (current date & time). Total steps are insert into steps table.
+///Gets the total number of steps for today using CoreMotion framework CMPedometer object passing start date  (last mid night date) and end date (current date & time). Total steps are inserted into steps table.
 -(void)getStepsFromCoreMotionStartDate:(NSDate *)startDate endDate:(NSDate *)endDate withCallBackHandler:(void(^)(NSInteger stepsCount))activityHandler;
 
 {
@@ -261,7 +272,7 @@ static StepsManager *sharedStepsManager=nil;
 }
 
 
-///Getting the step count for today using healthKit passing start date  (last mid night date) and end date (current date) and total steps are stored into totalSteps that are insert into steps table of database.
+///Gets the step count for today using healthKit passing start date  (last mid night date) and end date (current date) and total steps are stored into totalSteps that are inserted into steps table of database.
 -(void)getStepsFromHealthKitStartDate:(NSDate *)startDate endDate:(NSDate *)endDate withCallBackHandler:(void(^)(NSInteger stepsCount))activityHandler
 {
     totalSteps=0;
@@ -272,10 +283,10 @@ static StepsManager *sharedStepsManager=nil;
     // HKAuthorizationStatus status = [healthStore authorizationStatusForType:sampleType];
     
     
-    // Create a predicate to set start/end date bounds of the query
+    // Creates a predicate to set start/end date bounds of the query
     NSPredicate *predicate = [HKQuery predicateForSamplesWithStartDate:startDate endDate:endDate options:HKQueryOptionStrictStartDate];
     
-    // Create a sort descriptor for sorting by start date
+    // Creates a sort descriptor for sorting by start date
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:HKSampleSortIdentifierStartDate ascending:YES];
     
     
@@ -321,7 +332,7 @@ static StepsManager *sharedStepsManager=nil;
 
 
 
-///Getting the step count for today using FitBit passing start date  (last mid night date) and end date (current date) and total steps are stored into totalSteps that are insert into steps table of instant database.
+///Gets the step count for today using FitBit passing start date  (last mid night date) and end date (current date) and total steps are stored into totalSteps that are insert into steps table of instant database.
 -(void)getStepsFromFitBitStartDate:(NSDate *)startDate endDate:(NSDate *)endDate withCallBackHandler:(void(^)(NSInteger stepsCount))activityHandler
 {
     
@@ -334,7 +345,7 @@ static StepsManager *sharedStepsManager=nil;
     [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
     [dateFormatter setDateFormat:@"yyyy-MM-dd"];
     NSString *dateStr = [dateFormatter stringFromDate:startDate];
-    //Recent Activity Type - Bycycling
+    //Recent Activity Type - Bicycling
     NSString *urlString = [NSString stringWithFormat:@"https://api.fitbit.com/1/user/%@/activities/date/%@.json", user_id,dateStr];
     
     NSURL * url = [NSURL URLWithString:urlString];
@@ -342,7 +353,7 @@ static StepsManager *sharedStepsManager=nil;
     NSString *accessToken = [[NSUserDefaults standardUserDefaults]valueForKey:@"fitBitAccessToken"];
     NSString *authHeaderStr = [NSString stringWithFormat:@"Bearer %@", accessToken];
     
-    //Set Authorization Header
+    //Sets Authorization Header
     [defaultConfigObject setHTTPAdditionalHeaders:@{@"Authorization" :authHeaderStr}];
     defaultSession = [NSURLSession sessionWithConfiguration:defaultConfigObject];
     
@@ -425,7 +436,7 @@ static StepsManager *sharedStepsManager=nil;
                 
                 if (i==numberOfDay)
                 {
-                    // Calculates location time from midnight to now
+                    //Calculates location time from midnight to now
                     NSDate *NextDate= [NSDate date];
                     
                     NSDate *lastMidNight=[self midNightOfLastNight:NextDate];
@@ -472,7 +483,7 @@ static StepsManager *sharedStepsManager=nil;
 
 
 
-/// Getting last midnight using previous date (Used to split the place time data between 2 days)
+/// Gets last midnight using previous date (Used to split the place time data between 2 days)
 -(NSDate *)midNightOfLastNight :(NSDate *)date
 {
     
@@ -483,7 +494,7 @@ static StepsManager *sharedStepsManager=nil;
     NSDate* findMidNightDate = [gregorian1 dateFromComponents:dateComponents];
     return findMidNightDate;
 }
-/// Getting next day's midnight using passed date (Used to split the place time data between 2 days)
+/// Gets next day's midnight using passed date (Used to split the place time data between 2 days)
 -(NSDate *)nextMidNight:(NSDate *)date
 {
     

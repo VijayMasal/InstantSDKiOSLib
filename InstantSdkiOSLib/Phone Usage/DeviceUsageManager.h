@@ -4,7 +4,7 @@
 //
 //  Created by Emberify_Vijay on 23/09/17.
 //  Copyright © 2017 Emberify. All rights reserved.
-//
+//  Reviewed on 13/11/17
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -17,9 +17,9 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 {
     ///Failed phone usage tracking
     PhoneUsagePermissionFail=0,
-    ///phone usage tracking successfully
+    ///Phone usage tracking successful
     PhoneUsagePermissionSuccess =1,
-   ///Passcode not enable
+   ///Passcode not enabled
     PhoneUsagePermissionPasscodeNotEnable =2
 };
 
@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
     
 }
 /*!
- * @discussion Create device usage manager singletone class. That gives device usage time and unlock counts.
+ * @discussion Creates device usage manager singletone class. That gives device usage time and unlock counts.
  */
 +(DeviceUsageManager *)sharedDeviceUsage;
 
@@ -44,43 +44,43 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 
 
 /*!
- * @discussion Start device usage tracking.if deviceUsage tracking start successfully handler returns status PhoneUsagePermissionSuccess, if its fail handler returns PhoneUsagePermissionFail.if passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
+ * @discussion Starts device usage tracking. If deviceUsage tracking starts successfully handler returns status PhoneUsagePermissionSuccess, if it fails handler returns PhoneUsagePermissionFail. If passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
  */
 typedef void (^PhoneUsagePermissionCustomCompletionBlock)(PhoneUsagePermission phoneUsagePermission);
 -(void)startPhoneUsageTracking:(PhoneUsagePermissionCustomCompletionBlock)handler;
 
 /*!
- * @discussion Start timer for getting device usage time and unlock counts.
+ * @discussion Starts timer for getting device usage time and unlock counts.
  */
 -(BOOL)startTimer;
 
 /*!
- * @discussion Stop device usage tracking.if deviceUsage tracking stop successfully handler returns status 1, if its fail handler returns 0.
+ * @discussion Stops device usage tracking. If deviceUsage tracking stops successfully handler returns status YES, if its fail handler returns NO.
  */
 -(void)stopPhoneUsageTracking:(void(^)(BOOL isStop))handler;
 
 /*!
- * @discussion Stop tracking device usage time.
+ * @discussion Stops tracking device usage time.
  */
 -(BOOL)stopTimer;
 /*!
- * @discussion Set device passcode status when app coming in foreground method.
+ * @discussion Sets device passcode status when app coming in foreground method.
  */
 -(void)setNotificationObserverForDeviceState;
 
 /*!
- * @discussion Select all device usage date and check current date is exist in device usage table if current date exist into device usage date then select minutes and unlock count of that date.if device is unlock then add 1 minute time into selected minutes otherwise add 1 count into selected device unlock count and update into device usage table otherwise insert minute, unlock, date and day into device usage table for today's date.
+ * @discussion Selects all device usage date and check current date is exist in device usage table if current date exists in device usage date then selects minutes and unlock count of that date. If device is unlocked then add 1 minute time into selected minutes otherwise add 1 count into selected device unlock count and update into device usage table otherwise insert minute, unlock, date and day into device usage table for today's date.
  */
 -(void)deviceUsageTime:(BOOL )isDeviceUnlock;
 
 /*!
- * @discussion At application termination time update device usage time and isunlock status for better aacurate start and end time of next record into device usage table.
+ * @discussion When the app is terminated update device usage time and isunlock status for better accurate start and end time of next record into device usage table.
  */
 -(void)applicationTerminate;
 
 
 /*!
- * @discussion insert fitness activity and sleep data on app launch, app moves from backgorund to foreground and date change into fitness and sleep table.
+ * @discussion Inserts fitness activity and sleep data on app launch, app moves from backgorund to foreground and date change into fitness and sleep table.
  */
 -(void)InsertFitnessAndSleepRecord;
 @end

@@ -33,6 +33,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
         _locationModel=[[LocationNameAndTime alloc]init];
         [_locationModel setFitnessActivity:[NSArray arrayWithObjects:@"Walking",@"Running",@"Travelling",@"Steps",@"Cycling", nil]];
         _placeRecordArray=[[NSMutableArray alloc]init];
+        [self createDataBase];
     }
     return self;
 }
@@ -731,8 +732,17 @@ static InstantDataBase* sharedInstantDataBase=nil;
 
 -(void)fitBitPermissions:(void(^)(BOOL fitBitPermission))PermissionHandler
 {
-    
-    [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"] options:@{} completionHandler:nil];
+
+    if (@available(iOS 9.0, *)) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"]];
+        
+    }
+    else
+    {
+       
+        
+         [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"] options:@{} completionHandler:nil];
+    }
     
     PermissionHandler(YES);
 }
@@ -984,15 +994,20 @@ static InstantDataBase* sharedInstantDataBase=nil;
 ///After delete records from database insert current time record into database for updateing record after deleted record time.
 -(void)insertCurrentRecordAfterDeleteRecordsFromDatabase:(NSString *)tableName
 {
+    _locationModel=[self checkPermissionFlags];
     if ([tableName isEqualToString:@"DeviceUsage"])
     {
+        if (_locationModel.isOnPhoneUsage==YES)
+        {
+      
         [self insertIntoDeviceUsageTime:0 startTime:[NSDate date] endTime:[[NSDate date]dateByAddingTimeInterval:01] isUnlock:1 lastRecordId:0 queryIdentifier:@"insert" withCallbackHandler:^(BOOL isInsert) {
             
         }];
+        }
     }
     else if ([tableName isEqualToString:@"Places"])
     {
-        _locationModel=[self checkPermissionFlags];
+        
         if (_locationModel.isSignificantLocation==YES)
         {
             NSData *lastlocationData=[[NSUserDefaults standardUserDefaults]objectForKey:@"lastLocation"];
@@ -1004,16 +1019,23 @@ static InstantDataBase* sharedInstantDataBase=nil;
             
         }
         
-        [self insertInToPlaceDatabase:[self date:[NSDate date]] latitude:[LocationManager sharedLocationManager].locationManager.location.coordinate.latitude longitude:[LocationManager sharedLocationManager].locationManager.location.coordinate.longitude placeName:@"unknown" startTimeStamp:[NSDate date] endTimeStamp:[[NSDate date]dateByAddingTimeInterval:01] placeTime:0];
+        if (_locationModel.isOnPhoneUsage==YES || _locationModel.isSignificantLocation==YES)
+        {
+             [self insertInToPlaceDatabase:[self date:[NSDate date]] latitude:[LocationManager sharedLocationManager].locationManager.location.coordinate.latitude longitude:[LocationManager sharedLocationManager].locationManager.location.coordinate.longitude placeName:@"unknown" startTimeStamp:[NSDate date] endTimeStamp:[[NSDate date]dateByAddingTimeInterval:01] placeTime:0];
+        }
+       
         
         
     }
     else if ([tableName isEqualToString:@"Fitness"])
     {
-        
-        [self insertFitnessDataActivity:@"Walking" activityTime:1 steps:0 startTime:[NSDate date] endTime:[[NSDate date]dateByAddingTimeInterval:01] withCallBackHandler:^(BOOL isInsertData) {
-            
-        }];
+        if (_locationModel.isDefaultActivity==YES)
+        {
+            [self insertFitnessDataActivity:@"Walking" activityTime:1 steps:0 startTime:[NSDate date] endTime:[[NSDate date]dateByAddingTimeInterval:01] withCallBackHandler:^(BOOL isInsertData) {
+                
+            }];
+        }
+       
     }
     
     
@@ -1090,13 +1112,13 @@ static InstantDataBase* sharedInstantDataBase=nil;
         //steps insert query
         
         insertSQL = [NSString stringWithFormat:
-                     @"INSERT INTO Steps (steps,starttime,endtime,date)VALUES(%ld,\"%@\",\"%@\",\"%@\")",steps,startDate,endDate,date];
+                     @"INSERT INTO Steps (steps,starttime,endtime,date)VALUES(%ld,\"%@\",\"%@\",\"%@\")",(long)steps,startDate,endDate,date];
     }
     else
     {
         ///steps update query
         insertSQL = [NSString stringWithFormat:@"UPDATE Steps SET steps = %ld,endtime = '%@' WHERE date = '%@'",
-                     steps ,endDate,date];
+                     (long)steps ,endDate,date];
         
     }
     

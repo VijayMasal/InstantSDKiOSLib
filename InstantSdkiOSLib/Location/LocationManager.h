@@ -4,7 +4,7 @@
 //
 //  Created by Vijay on 26/08/17.
 //  Copyright © 2017 Emberify. All rights reserved.
-//
+//  Reviewed on 13/11/17
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
@@ -14,7 +14,7 @@ typedef NS_ENUM(NSUInteger, LocationPermission)
 {
     ///location permission fail
     LocationPermissionFail =0,
-    ///location permission successfully
+    ///location permission successful
     LocationPermissionSuccess =1 ,
     ///phone usage enable
     LocationPermissionPhoneUsageEnable =2
@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, LocationPermission)
 static NSString * const lastlocationdatekey=@"lastlocationdate";
 @interface LocationManager : NSObject<CLLocationManagerDelegate>
 /*!
- * @discussion Create location manager singletone class. That class manages all location related information like location name,time,latitude,longitude and date.
+ * @discussion Creates location manager singletone class. It manages all location related information like location name,time,latitude,longitude and date.
  */
 
 +(LocationManager *)sharedLocationManager;
@@ -37,33 +37,30 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
 -(NSString *)cutNumberInto4DecimalPoint:(double)number;
 
 /*!
- * @discussion called to start location service using significant change location.if location service successfully start handler returns status LocationPermissionSuccess .if location permission fail handler returns LocationPermissionFail.if phone usage is enable handler returns LocationPermissionPhoneUsageEnable.
+ * @discussion Starts location service using significant change location. If location service successfully starts handler returns status LocationPermissionSuccess. If location permission fails handler returns LocationPermissionFail. If phone usage is enabled handler returns LocationPermissionPhoneUsageEnable.
  */
 typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locationPermission);
 -(void)startSignificantLocation:(locationPermissionCustomCompletionBlock)handler;
 
 /*!
- * @discussion called to start location service using significant change location.if start significant location service successfully returns Yes otherwise No.
+ * @discussion Starts location service using significant change location. If significant location service starts successfully returns Yes otherwise No.
  */
-
 - (BOOL )startSignificantLocation;
 
-/*!
- * @discussion called to start location service using significant change location.if location service successfully start handler returns status 1 otherwise handler returns status 0.
- */
+
 
 /*!
- * @discussion called to stop location service.if location service successfully stop handler returns Yes otherwise fail handler returns No.
+ * @discussion Stops location service. If location service successfully stop handler returns Yes otherwise fail handler returns No.
  */
 -(void)stopSignificantLocation:(void(^)(BOOL isStop))handler;
 
 /*!
- * @discussion called to start location service using standered location service.
+ * @discussion Starts location service using standard location service.
  */
 -(void)startStanderedLocation;
 
 /*!
- * @discussion called to update location time in place table of database when app moves from background to foregound and.
+ * @discussion Updates location time in place table of database when app moves from background to foregound and.
  
  */
 
@@ -71,7 +68,7 @@ typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locat
 
 
 /*!
- * @discussion calling update location using location array update current timestamp and returns location array.
+ * @discussion Updates location using location array update current timestamp and returns location array.
  * @param location location is array contains of latitude, longitude, altitude, accuracy and timestamp.
  
  * @return returns location array to update location time.
@@ -82,19 +79,19 @@ typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locat
 
 
 /*!
- * @discussion Saves Current location in NSUserDefaults to find last and current location time interval difference.
+ * @discussion Saves current location in NSUserDefaults to find last and current location time interval difference.
  */
 -(BOOL)saveCurrentLocationInNSUserDefault:(NSMutableArray *)locations;
 
 /*!
- * @discussion finding a last midnight using passed date.
+ * @discussion Finds a last midnight using passed date.
  * @param date .
  * @return midnight date using passed date.
  */
 -(NSDate *)midNightOfLastNight :(NSDate *)date;
 
 /*!
- * @discussion find next midnight using passed date.
+ * @discussion Finds next midnight using passed date.
  * @param date .
  * @return next midnight using passed date.
  */
@@ -102,7 +99,7 @@ typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locat
 -(NSDate *)nextMidNight:(NSDate *)date;
 
 /*!
- * @discussion Ckeck Location permission allow or denied.
+ * @discussion Ckecks Location permission allow or denied.
  
  */
 -(BOOL)checkLocationPermission;

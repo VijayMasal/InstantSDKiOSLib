@@ -4,7 +4,7 @@
 //
 //  Created by Emberify_Vijay on 23/09/17.
 //  Copyright © 2017 Emberify. All rights reserved.
-//
+//  Reviewed on 12/11/17
 
 #import "DeviceUsageManager.h"
 #import "LocationManager.h"
@@ -12,7 +12,7 @@
 #import "SleepManager.h"
 @implementation DeviceUsageManager
 static DeviceUsageManager *sharedDeviceUsage=nil;
-/// Create device usage manager singletone class. That gives device usage time and unlock counts.
+/// Creates device usage manager singletone class. That gives device usage time and unlock counts.
 
 +(DeviceUsageManager *)sharedDeviceUsage
 {
@@ -43,7 +43,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 }
 
 
-/// Start device usage tracking.if deviceUsage tracking start successfully handler returns status PhoneUsagePermissionSuccess, if its fail handler returns PhoneUsagePermissionFail.if passcode not enable handler returns PhoneUsagePermissionPasscodeNotEnable.
+/// Starts device usage tracking. If deviceUsage tracking starts successfully handler returns status PhoneUsagePermissionSuccess, if it fails handler returns PhoneUsagePermissionFail. If passcode  is not enabled handler returns PhoneUsagePermissionPasscodeNotEnable.
 
 -(void)startPhoneUsageTracking:(PhoneUsagePermissionCustomCompletionBlock)handler
 {
@@ -72,7 +72,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 }
 
 
-/// Start timer for getting device usage time and unlock counts.
+/// Starts timer for getting device usage time and unlock counts.
 -(BOOL)startTimer
 {
     [self setNotificationObserverForDeviceState];
@@ -92,7 +92,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
 }
 
-/// Stop device usage tracking.if deviceUsage tracking stop successfully handler returns status Yes, if its fail handler returns .
+/// Stops device usage tracking. If deviceUsage tracking stops successfully handler returns status Yes, otherwise returns No.
 
 -(void)stopPhoneUsageTracking:(void(^)(BOOL isStop))handler
 {
@@ -115,7 +115,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 }
 
 
-/// Stop tracking device usage time.
+/// Stops tracking device usage time
 
 -(BOOL)stopTimer
 {
@@ -129,7 +129,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     [[LocationManager sharedLocationManager]startStanderedLocation];
     [self deleteItemAsync];
 }
-///Check Device status for device lock or unlock.
+/// Checks device status for device lock or unlock.
 - (BOOL)checkPasscodeState
 {
     LNPasscodeStatus status = [UIDevice currentDevice].passcodeStatus;
@@ -169,7 +169,6 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 - (void)addItemAsync {
     CFErrorRef error = NULL;
     
-    // Should be the secret invalidated when passcode is removed? If not then use kSecAttrAccessibleWhenUnlocked
     SecAccessControlRef sacObject = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                                     kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
                                                                     kSecAccessControlUserPresence, &error);
@@ -180,7 +179,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
         return;
     }
     
-    // we want the operation to fail if there is an item which needs authentication so we will use
+    // The operation fails if there is an item which needs authentication so the app uses
     // kSecUseNoAuthenticationUI
     NSDictionary *attributes = @{
                                  (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
@@ -250,7 +249,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 
 
 
-///Select all device usage date and check current date is exist in device usage table if current date exist into device usage date then select minutes and unlock count of that date.if device is unlock then add 1 minute time into selected minutes otherwise add 1 count into selected device unlock count and update into device usage table otherwise insert minute, unlock, date and day into device usage table for today's date.
+/// Selects all device usage dates and check ig current date exists in device usage table, if the current date exist into device usage date then select minutes and unlock count of that date. If device is unlocked then add 1 minute time into selected minutes otherwise add 1 count into selected device unlock count and update into device usage table otherwise insert minute, unlock, date and day into device usage table for today's date.
 -(void)deviceUsageTime:(BOOL )isDeviceUnlock
 {
     [[InstantDataBase sharedInstantDataBase]selectDeviceUsageLastRecord:^(NSMutableDictionary *deviceUsageLastRecord)
@@ -302,7 +301,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
 }
 
-/// At application termination time update device usage time and isunlock status for better aacurate start and end time of next record into device usage table.
+/// When the application is terminated, the device usage time and the unlock status is updated for better accuracy of start and end time of the next record is inserted into the device usage table.
 -(void)applicationTerminate
 {
     [self deviceUsageTime:NO];
@@ -322,7 +321,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
     if (permissions.isSleep==YES)
     {
-        //Call sleep manager to get sleep data
+        //Calls sleep manager to get sleep data
         [[SleepManager sharedSleepManager] getSleepOptionAndFindSleepDataFromStartTime:[NSDate date] toEndTime:[NSDate date]];
     }
     

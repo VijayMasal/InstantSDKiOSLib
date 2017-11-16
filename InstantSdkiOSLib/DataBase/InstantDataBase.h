@@ -4,7 +4,7 @@
 //
 //  Created by Vijay on 21/08/17.
 //  Copyright © 2017 Emberify. All rights reserved.
-//
+//  Reviewed on 13/11/17
 
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
@@ -94,7 +94,7 @@ static NSString * const placenamekey=@"placename";
 -(BOOL)updateIntoPlaceDatabase:(NSInteger)placeID currentDate:(NSString *)currentDate  placeName:(NSString *)placeName endTimeStamp:(NSDate *)endTimeStamp placeTime:(NSInteger)placeTime;
 
 /*!
- *@discussion Select all location names, time, latitude,longitude and date from places table using selectDistinctTwoDecimalLatLongFromPlaceTable method to display this data on the UI
+ *@discussion Selects all location names, time, latitude,longitude and date from places table using selectDistinctTwoDecimalLatLongFromPlaceTable method to display this data on the UI
  * @param fromDate .
  * @param toDate .
  * @return location data dictionary.
@@ -129,7 +129,7 @@ static NSString * const placenamekey=@"placename";
 
 
 /*!
- * @discussion after insert record into fitness table select fitness activity like walktime, traveltime, runtime, stationarytime, cycletime, steps count from fitness table and returns fitness activity info into LocationNameAndTime.
+ * @discussion Inserts record into fitness table select fitness activity like walktime, traveltime, runtime, stationarytime, cycletime, steps count from fitness table and returns fitness activity info into LocationNameAndTime.
  * @return walktime, runtime, traveltime, stationarytime, cycletime, steps count and date into LocationNameAndTime.
  */
 
@@ -207,26 +207,26 @@ static NSString * const placenamekey=@"placename";
 #pragma mark -Device Usage
 
 /*!
- * @discussion Creates device usage table with columns id, minute, unlock, date, day into instantDB.sqlite.if create device usage table into database handler returns YES otherwise NO.
+ * @discussion Creates device usage table with columns id, minute, unlock, date, day into instantDB.sqlite. If create device usage table into database handler returns YES otherwise NO.
  */
 -(BOOL)createDeviceUsageTableInDatabase;
 
 /*!
- * @discussion Get all device usage dates in LocationNameAndTime handler from DeviceUsage table for identify that date is exists or not in database if current date exists in database then update device usage record of that date otherwise insert record of that date into database.
+ * @discussion Gets all device usage dates in LocationNameAndTime handler from DeviceUsage table for identify that date is exists or not in database if current date exists in database then update device usage record of that date otherwise insert record of that date into database.
  
  */
 -(void)selectDatesFromDeviceUsage:(void(^)(LocationNameAndTime *deviceusageDate))handler;
 
 
 /*!
- * @discussion Get today's device usage time and unlock count using passed date  into handler for update today's device time and unlock counts into device usage table.
+ * @discussion Gets today's device usage time and unlock count using passed date into handler for update today's device time and unlock counts into device usage table.
  
  * @param todayDate is todays date
  */
 -(void)selectTodayDeviceUsageMinutesAndUnlocksForDate:(NSString *)todayDate withcallbackHandler:(void(^)(int minute,int unlock))handler;
 
 /*!
- * @discussion Insert devices usage minutes, unlock count, date and day into devices usage table.if insert record successfully into device usage table handler returns Yes otherwise No.
+ * @discussion Inserts devices usage minutes, unlock count, date and day into devices usage table.if insert record successfully into device usage table handler returns Yes otherwise No.
  
  @param minute passed device usage time in minutes.
  @param startTime unlock start time.
@@ -245,24 +245,24 @@ static NSString * const placenamekey=@"placename";
 -(NSMutableDictionary *)selectAllDataFromDeviceTimeFromDate:(NSDate *)fromDate toDate:(NSDate *)toDate ;
 
 /*!
- * @discussion Select last record of device usage for update or insert new record start time and end time into device usage table of database after selecting last record handler returns last record dictionary.
+ * @discussion Selects last record of device usage for update or insert new record start time and end time into device usage table of database after selecting last record handler returns last record dictionary.
  */
 -(void)selectDeviceUsageLastRecord:(void(^)(NSMutableDictionary *deviceUsageLastRecord))handler;
 
 #pragma mark -Steps methods
 
 /*!
- *  Create steps table in instantdata base, if steps table creates successfully it returns Yes otherwise No.
+ *  Creates steps table in instantdata base, if steps table creates successfully it returns Yes otherwise No.
  */
 -(BOOL)createStepsTable;
 
 /*!
- *  select all dates from steps table for checking current date is exists or not in steps table.if current date is steps table then update steps in steps table otherwise insert steps in table
+ *  Selects all dates from steps table for checking current date is exists or not in steps table. If current date is steps table then update steps in steps table otherwise insert steps in table
  */
 -(LocationNameAndTime *)selectAllDateOfSteps;
 
 /*!
- * Inserts or update steps count, start time, end time into steps table.if record insert or update successfully into steps table handler returns Yes otherwise No.
+ * Inserts or update steps count, start time, end time into steps table. If record insert or update successfully into steps table handler returns Yes otherwise No.
  @param steps total steps count.
  @param startDate get steps start time.
  @param endDate gets steps end date.
@@ -272,39 +272,39 @@ static NSString * const placenamekey=@"placename";
 -(void)insertOrUpdateSteps:(NSInteger)steps startDate:(NSDate *)startDate endDate:(NSDate *)endDate date:(NSString *)date queryStatus:(NSString *)queryStatus withCallBackHandler:(void(^)(BOOL isInsert))handler;
 
 /*!
- *   Selects all data from steps table for showing on UI
- *@param fromDate pass start date to retrive data.
- *@param toDate pass end date to retrive data.
- * @return all steps data into array.
+ *  Selects all data from steps table for displaying it
+ *  @param fromDate pass start date to retrive data.
+ *  @param toDate pass end date to retrive data.
+ *  @return all steps data into array.
  */
 -(NSMutableArray *)selectStepsDataFromStepsTableFromDate:(NSDate *)fromDate toDate:(NSDate *)toDate;
 
 #pragma mark -Delete Records form database;
 /*!
- * @discussion delete database table records from given fromDate to toDate.
+ * @discussion deletes database table records from given fromDate to toDate.
  */
 -(void)deleteRecordsFromDate:(NSDate *)date toDate:(NSDate *)toDate withCallbackHandler:(void(^)(BOOL isDelete))handler;
 
 #pragma mark -fetchTrackedData
 /*!
- * @discussion select all record of database from given fromDate to toDate.after selecting record convert into jsonSting and handler returns data for show result on UI.
+ * @discussion Selects all record of database from given fromDate to toDate.after selecting record convert into jsonSting and handler returns data for show result on UI.
  @param fromDate pass start date to retrive data.
  @param toDate pass end date to retrive data.
  */
 -(void)fetchTrackedData:(NSDate *)fromDate toDate:(NSDate *)toDate withCallBackHandler:(void(^)(NSString *jsonString , NSError *error))handler;
 
 /*!
- *@discussion App moves from background to foreground updates all database tables.
+ *@discussion App moves from background to foreground and updates all database tables.
  */
 -(void)applicationMovesBackgroundToForeground;
 
 /*!
- *@discussion close database when application will terminate.
+ *@discussion Closes database when application will terminate.
  */
 -(void)callOnapplicationWillTerminate;
 
 /*!
- * @discussion Get fitbit token for fetching data from fitbit.
+ * @discussion Gets fitbit token for fetching data from fitbit.
  */
 -(void)FitBitOpenUrl:(NSURL *)url;
 

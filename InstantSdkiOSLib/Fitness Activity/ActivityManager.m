@@ -5,6 +5,7 @@
 //  Created by Emberify_Vijay on 02/09/17.
 //  Copyright © 2017 Emberify. All rights reserved.
 //  Reviewed on 10/09/17
+//  Reviewed on 11/11/17
 
 #import "ActivityManager.h"
 #import "LocationNameAndTime.h"
@@ -41,7 +42,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 }
 
 
-/// Start fitness tracking using coremotion.if fintess tracking start successful handler returns FitnessActivityPermissionSuccess otherwise handler returns  FitnessActivityPermissionFail.
+/// Starts fitness tracking using coremotion. If fitness tracking starts successfully handler returns FitnessActivityPermissionSuccess otherwise handler returns  FitnessActivityPermissionFail.
 
 -(void)startCoreMotionActivityTracking:(FitnessPermissionCustomCompletionBlock)handler
 {
@@ -96,7 +97,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
     
 }
 
-///Get all fitness activity using coremotion framework CMMotionActivityManager and steps using CMPedometer passing startdate and enddate. Called on significant location changes (also called through LocationManager on app open)
+///Gets all fitness activity using coremotion framework CMMotionActivityManager and steps using CMPedometer passing startdate and enddate. Called on significant location changes (also called through LocationManager on app open)
 //-(void)getFitnessDataFromCoreMotionStartDate
 -(void)getFitnessDataFromCoreMotionStartDate:(NSDate *)startDate endDate:(NSDate *)endDate;
 {
@@ -324,7 +325,6 @@ static ActivityManager *sharedFitnessActivityManager=nil;
         lastActivityDate= (NSDate *)[[NSUserDefaults standardUserDefaults] objectForKey:@"activitydate"];
     }
     
-    //    //L10
     if (lastActivityDate==nil)
     {
         lastActivityDate=[NSDate date];
@@ -346,7 +346,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
         {
             if (i==0)
             {
-                //calculate  last location time from  Last MidNight
+                //Calculate  last location time from  Last MidNight
                 NSDate *NextDate= [lastActivityDate dateByAddingTimeInterval:1*24*60*60];
                 
                 NSDate *nextMidNight=[self nextMidNight:NextDate];
@@ -434,7 +434,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 -(NSDate *)StartTime:(NSDate *)startTime
 {
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
-    //To set Starting time...
+    //To set Starting time
     NSDateComponents *components = [gregorian components: NSUIntegerMax fromDate: startTime];
     [components setDay:components.day];
     [components setHour: 19];

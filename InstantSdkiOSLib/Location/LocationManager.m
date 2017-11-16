@@ -5,6 +5,7 @@
 //  Created by Vijay on 26/08/17.
 //  Copyright © 2017 Emberify. All rights reserved.
 //  Reviewed on 12/09/17
+//  Reviewed on 12/11/17
 
 #pragma mark -Location
 #import "LocationManager.h"
@@ -47,18 +48,20 @@ static LocationManager *sharedLocationManager=nil;
     _locationManager=[[CLLocationManager alloc]init];
     [_locationManager requestAlwaysAuthorization];
     _locationManager.delegate=self;
- #ifdef __IPHONE_9_0
     if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)])
     {
+        if(@available(iOS 9.0, *)) {
+       
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
+        }
     }
-    #endif
+   
     _locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
     _locationManager.distanceFilter = 500;
     _locationManager.pausesLocationUpdatesAutomatically=NO;
     
 }
-/// start location service using significant change location.if location service successfully start handler returns status LocationPermissionSuccess .if location permission fail handler returns LocationPermissionFail.if phone usage is enable handler returns LocationPermissionPhoneUsageEnable.
+/// Starts location service using significant change location, if location service is successfully started handler returns status LocationPermissionSuccess. If location permission fail handler returns LocationPermissionFail. If phone usage is enabled handler returns LocationPermissionPhoneUsageEnable.
 
 -(void)startSignificantLocation:(locationPermissionCustomCompletionBlock)handler
 {  LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
@@ -88,7 +91,7 @@ static LocationManager *sharedLocationManager=nil;
 -(BOOL)startSignificantLocation
 {
     BOOL isAuthorize= [self checkLocationPermission];
-    //if loaction service authorization successfuly then start location using significant change location
+    //if loaction service authorization is successful then start location using significant change location
     if (isAuthorize==YES)
     {
         _locationManager=nil;
@@ -103,7 +106,7 @@ static LocationManager *sharedLocationManager=nil;
     
 }
 
-/// called to stop location service.if location service successfully stop handler returns status 1 otherwise fail handler returns 2.
+/// Called to stop location service. If location service successfully stops handler returns status 1 otherwise fail handler returns 2.
 
 -(void)stopSignificantLocation:(void(^)(BOOL isStop))handler
 {
@@ -120,7 +123,7 @@ static LocationManager *sharedLocationManager=nil;
 }
 
 
-/// called to start location service using standered location service.
+/// Called to start location service using standered location service.
 -(void)startStanderedLocation
 {
     
@@ -145,7 +148,7 @@ static LocationManager *sharedLocationManager=nil;
     if ([CLLocationManager locationServicesEnabled] == NO)
     {
         isAuthorize=NO;
-        //if loaction service not enabled then show location permission alert on view
+        //If location service not enabled then show location permission alert on view
         
         
     } else
@@ -167,7 +170,7 @@ static LocationManager *sharedLocationManager=nil;
 }
 
 #pragma mark -Significant Location
-/** Gets location updates when the user changes their location (sometimes gets triggered at same place) like Latitude,Longitude,Horizontal Accuracy ,Vertical Accuracy ,TimeStamp,Speed. Can be called even if the app is closed by the user. */
+/** Gets location updates when the user changes their location (sometimes gets triggered at same place) like Latitude, Longitude, Horizontal Accuracy, Vertical Accuracy, TimeStamp,Speed. Can be called even if the app is closed by the user. */
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray<CLLocation *> *)locations
 {
@@ -218,7 +221,7 @@ static LocationManager *sharedLocationManager=nil;
     return locations;
 }
 
-/// Updates last location time stamp, using last stored location when app moves from background to foreground
+/// Updates last location time stamp, using last stored location when the app moves from background to foreground
 -(void)backgroundToForgroundLocationUpdate
 {
     //[self checkLocationPermission];
@@ -253,7 +256,7 @@ static LocationManager *sharedLocationManager=nil;
     
 }
 
-///Finds the number of days that for which place time needs to be updated in case significant location isn't triggered for multiple days (Worse case scenario, normally significant location gets triggered every few hours. Need to do some exception handling if the user has been travelling with location off or phone switched off.)
+///Finds the number of days that for which place time needs to be updated in case significant location isn't triggered for multiple days (Worst case scenario, normally significant location gets triggered every few hours. )
 -(void)findLocationTimeInterval:(NSArray *)locations
 {
     //last inserted location date
@@ -284,7 +287,7 @@ static LocationManager *sharedLocationManager=nil;
     
 }
 
-/// Getting last midnight using previous date (Used to split the place time data between 2 days)
+/// Gets last midnight using previous date (Used to split the place time data between 2 days)
 -(NSDate *)midNightOfLastNight :(NSDate *)date
 {
     
@@ -295,7 +298,7 @@ static LocationManager *sharedLocationManager=nil;
     NSDate* findMidNightDate = [gregorian1 dateFromComponents:dateComponents];
     return findMidNightDate;
 }
-/// Getting next day's midnight using passed date (Used to split the place time data between 2 days)
+/// Gets next day's midnight using passed date (Used to split the place time data between 2 days)
 -(NSDate *)nextMidNight:(NSDate *)date
 {
     
@@ -450,7 +453,7 @@ static LocationManager *sharedLocationManager=nil;
 }
 
 
-/// Get location name using reverse geocoding and returns callbackHandler with location name
+/// Gets location name using reverse geocoding and returns callbackHandler with location name
 -(void)getLocationNameFromlatLong:(CLLocation *)location withCallBackHandler:(void(^)(NSString *placeName))placeName
 {
     

@@ -137,7 +137,7 @@ static SleepManager *sharedSleepManager=nil;
     {
         
         
-        [self getSleepDataUsingCoreMotionFromStartTime:[[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime] toEndTime:[[InstantDataBase sharedInstantDataBase] sleepEndTime:toEndTime] withCallBack:^(BOOL isSleepData)
+        [self getSleepDataUsingCoreMotionFromStartTime:startTime toEndTime:toEndTime withCallBack:^(BOOL isSleepData)
          {}];
     }
     else if ([sleepOptionName isEqualToString:@"healthkit"])
@@ -163,6 +163,8 @@ static SleepManager *sharedSleepManager=nil;
 
 -(void)getSleepDataUsingCoreMotionFromStartTime:(NSDate *)startTime toEndTime:(NSDate *)endTime withCallBack:(void(^)(BOOL  isSleepData))sleepActivity
 {
+    dispatch_async(dispatch_get_main_queue(), ^()
+                   {
     [_sleepActivity queryActivityStartingFromDate:[[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime] toDate:[[InstantDataBase sharedInstantDataBase] sleepEndTime:endTime] toQueue:[NSOperationQueue new] withHandler:^(NSArray * sleepData, NSError *error)
      {
          __block  BOOL isPermission;
@@ -204,6 +206,7 @@ static SleepManager *sharedSleepManager=nil;
              
          }
      }];
+                   });
     
     
 }
@@ -350,6 +353,11 @@ static SleepManager *sharedSleepManager=nil;
         
         
     }
+    else
+    {
+        sleepTime(YES);
+    }
+    
     
     
     
