@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
 
   
   s.name         = "InstantSdkiOSLib"
-  s.version      = "2.16"
+  s.version      = "2.17"
   s.summary      = "A short description of InstantSdkiOSLib."
 
   s.homepage     = "http://emberify.com/"
@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   
   s.author             = { "vijay" => "vdmasal@gmail.com" }
  
-  s.source       = { :git => "https://github.com/VijayMasal/InstantSdkiOSLib.git", :tag => "2.16"  }
+  s.source       = { :git => "https://github.com/VijayMasal/InstantSdkiOSLib.git", :tag => "2.17"  }
 
   s.source_files  = "InstantSdkiOSLib", "InstantSdkiOSLib/**/*.{h,m}"
   
