@@ -283,7 +283,8 @@ static NSString * const placenamekey=@"placename";
 /*!
  * @discussion deletes database table records from given fromDate to toDate.
  */
--(void)deleteRecordsFromDate:(NSDate *)date toDate:(NSDate *)toDate withCallbackHandler:(void(^)(BOOL isDelete))handler;
+-(void)deleteTrackedData:(NSDate *)fromDate toDate:(NSDate *)toDate withCallBackHandler:(void(^)(BOOL isDelete))handler;
+
 
 #pragma mark -fetchTrackedData
 /*!

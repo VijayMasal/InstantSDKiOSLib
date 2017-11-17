@@ -329,8 +329,8 @@ static SleepManager *sharedSleepManager=nil;
         if(isSleepTimeSet == 0)
         {
             zeroSleep = 1;
-            SleepTime = startTime;
-            WokeUpTime = endTime;
+            SleepTime = [[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime];
+            WokeUpTime = [[InstantDataBase sharedInstantDataBase] sleepStartTime:startTime];
         }
         [_dateFormatter setDateFormat:@"MMM dd,YYYY"];
         NSString *date = [_dateFormatter stringFromDate:[startTime dateByAddingTimeInterval:timeToFallAsleep]];
@@ -648,16 +648,9 @@ static SleepManager *sharedSleepManager=nil;
                         NSDate *lastDate= [lastActivityDate dateByAddingTimeInterval:i*24*60*60];
                         NSDate *lastMidNight=[self midNightOfLastNight:lastDate];
                         
-                        //mid night of tomorrow
-                        NSDate *NextDate= [lastActivityDate dateByAddingTimeInterval:(i+1)*24*60*60];
-                        NSDate *nextMidNight=[self nextMidNight:NextDate];
-                        
-                        
                         //Calls Sleep Manager to find Fitness Data
-                        [self getSleepOptionAndFindSleepDataFromStartTime:lastMidNight toEndTime:nextMidNight];
-                        
-                        
-                        
+                        [self getSleepOptionAndFindSleepDataFromStartTime:lastMidNight toEndTime:lastMidNight];
+                     
                     }
                     
                 }

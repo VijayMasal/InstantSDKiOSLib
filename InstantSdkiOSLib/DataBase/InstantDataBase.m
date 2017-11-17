@@ -934,7 +934,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
 #pragma mark -Delete Records form database;
 /// delete database table records from selected date to yesterday.
 
--(void)deleteRecordsFromDate:(NSDate *)date toDate:(NSDate *)toDate withCallbackHandler:(void(^)(BOOL isDelete))handler
+-(void)deleteTrackedData:(NSDate *)fromDate toDate:(NSDate *)toDate withCallBackHandler:(void(^)(BOOL isDelete))handler
 {
     NSArray *tableNameArray=[NSArray arrayWithObjects:@"DeviceUsage",@"Places",@"Fitness",@"Steps" ,@"Sleep", nil];
     //NSString *StartDate=[NSString stringWithFormat:@"%@",[self date:date]];
@@ -947,17 +947,17 @@ static InstantDataBase* sharedInstantDataBase=nil;
         NSString *phoneDeleteQuelry;
         if ([tableName isEqualToString:@"Steps"])
         {
-            NSDate *firstdate=[self midNightOfLastNight:date];
+            NSDate *firstdate=[self midNightOfLastNight:fromDate];
             NSDate *lastDate= [toDate dateByAddingTimeInterval:-1*24*60*60];
             phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (starttime >='%@' AND endtime <='%@') or (endtime >='%@' and starttime <= '%@')",tableName,firstdate,lastDate,firstdate,lastDate];
         }
         else if ([tableName isEqualToString:@"Sleep"])
         {
-            phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (sleeptime between '%@' AND '%@') or  (wokeuptime >='%@' and sleeptime <= '%@')",tableName,date,toDate,date,toDate];
+            phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (sleeptime between '%@' AND '%@') or  (wokeuptime >='%@' and sleeptime <= '%@')",tableName,fromDate,toDate,fromDate,toDate];
         }
         else
         {
-            phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (starttime between '%@' AND '%@') or  (endtime >='%@' and starttime <= '%@')",tableName,date,toDate,date,toDate];
+            phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (starttime between '%@' AND '%@') or  (endtime >='%@' and starttime <= '%@')",tableName,fromDate,toDate,fromDate,toDate];
         }
         
         
