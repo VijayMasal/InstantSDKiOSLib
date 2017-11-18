@@ -90,6 +90,7 @@ static LocationManager *sharedLocationManager=nil;
 /// Starts location tracking using significant change location method
 -(BOOL)startSignificantLocation
 {
+[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"significantLocationEnable"];
     BOOL isAuthorize= [self checkLocationPermission];
     //if loaction service authorization is successful then start location using significant change location
     if (isAuthorize==YES)
@@ -115,7 +116,8 @@ static LocationManager *sharedLocationManager=nil;
     {
         permissions.isSignificantLocation=NO;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
+            
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"significantLocationEnable"];
         });
     }
     
@@ -144,6 +146,8 @@ static LocationManager *sharedLocationManager=nil;
 
 -(BOOL)checkLocationPermission
 {
+    LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
+    
     BOOL isAuthorize=NO;
     if ([CLLocationManager locationServicesEnabled] == NO)
     {
@@ -158,11 +162,29 @@ static LocationManager *sharedLocationManager=nil;
         if(authorizationStatus == kCLAuthorizationStatusDenied || authorizationStatus == kCLAuthorizationStatusRestricted)
         {
             isAuthorize=NO;
+            if (permissions.isOnPhoneUsage==YES || permissions.isSignificantLocation == YES)
+            {
+                [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
+            }
+            
             
         }
         else
         {
             isAuthorize=YES;
+            if (permissions.isOnPhoneUsage==YES)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSUserDefaults standardUserDefaults]setValue:@"standered" forKey:@"location"];
+                });
+            }
+            else if (permissions.isSignificantLocation==YES)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSUserDefaults standardUserDefaults]setValue:@"significant" forKey:@"location"];
+                });
+            }
+        
         }
     }
     

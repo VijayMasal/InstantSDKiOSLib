@@ -46,7 +46,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 
 -(void)startCoreMotionActivityTracking:(FitnessPermissionCustomCompletionBlock)handler
 {
-    [[NSUserDefaults standardUserDefaults] setValue:@"default" forKey:@"activtiy"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"defaultActivityEnable"];
     [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"activitydate"];
     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
     
@@ -66,16 +66,13 @@ static ActivityManager *sharedFitnessActivityManager=nil;
         }
         
         //Get activity like steps count, walking, travelling, running, cycling from coremotion framework
-        if (activityType.isCustomeActivity==NO)
-        {
-            [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
-        }
         
-        
-        [self getWalkRunTravelCycleFromStartDate:starttime endDate:[NSDate date] withCallBackHandeler:^(BOOL isActivity)
+        [self checkActivityPermision:^(BOOL activityPermission)
          {
-             if (isActivity==YES)
+             if (activityPermission==YES)
              {
+                 [self getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
+                 [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
                  handler(FitnessActivityPermissionSuccess);
              }
              else
@@ -90,11 +87,8 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 
 -(void)stopCoreMotionActivityTracking:(void(^)(BOOL isStop))handler
 {
-    
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"activtiy"];
-    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"activitydate"];
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"defaultActivityEnable"];
     handler(YES);
-    
 }
 
 ///Gets all fitness activity using coremotion framework CMMotionActivityManager and steps using CMPedometer passing startdate and enddate. Called on significant location changes (also called through LocationManager on app open)
@@ -129,46 +123,6 @@ static ActivityManager *sharedFitnessActivityManager=nil;
     }
 }
 
-
-
-///Gets walking, running, travelling, cycling data from CMMotionActivityManager and passes it to findAllFtinessActivityTime with activity info array and steps count
--(void)getWalkRunTravelCycleFromStartDate:(NSDate *)startDate endDate:(NSDate *)endDate withCallBackHandeler:(void(^)(BOOL isActivity))activityData;
-{
-    _motionActivity=[[CMMotionActivityManager alloc]init];
-    [_motionActivity queryActivityStartingFromDate:startDate toDate:endDate toQueue:[NSOperationQueue new] withHandler:^(NSArray * activities, NSError *  error)
-     {
-         
-         
-         if (error)
-         {
-             
-             
-             if (error.code==CMErrorMotionActivityNotAuthorized || error.code==CMErrorMotionActivityNotEntitled || error.code==CMErrorMotionActivityNotAvailable)
-             {
-                 
-               activityData(NO);
-             }
-           
-         }
-         else
-         {
-             if (activities)
-             {
-                 
-                 //get all activity time
-                 [self findAllFtinessActivityTime:activities endDate:[NSDate date] toQueue:[NSOperationQueue new] withCallBackHandler:^(BOOL isParseActivityTIme)
-                  {
-                      
-                  }];
-                 activityData(YES);
-                 
-             }
-         }
-         
-         
-     }];
-    
-}
 
 ///After getting fitness activity using CMMotionActivityManage and CMMpedometer calculates each activity time (like walktime, runtime, traveltime, stationarytime, cycletime, steps count) from passed CMMotionActivity array and totalSteps and currentDate, if activity is not present then insert all activity time 0 for particular date in fitness table.if parsing activity time callback send Yes otherwise No .
 -(void )findAllFtinessActivityTime:(NSArray<CMMotionActivity *>*)activity  endDate:(NSDate *)currentDate toQueue:(NSOperationQueue *)toQueue withCallBackHandler:(void(^)(BOOL isParseActivityTIme))block
@@ -443,5 +397,42 @@ static ActivityManager *sharedFitnessActivityManager=nil;
     NSDate *startingTime = [gregorian dateFromComponents: components];
     return startingTime;
 }
+
+
+
+/// Check activity permissions using core motion
+
+-(void)checkActivityPermision:(void(^)(BOOL activityPermission))handler
+{
+    
+    [_motionActivity queryActivityStartingFromDate:[NSDate date] toDate:[NSDate date] toQueue:[NSOperationQueue new] withHandler:^(NSArray * activities, NSError *  error)
+     {
+         
+         
+         if (error)
+         {
+             
+             
+             if (error.code==CMErrorMotionActivityNotAuthorized || error.code==CMErrorMotionActivityNotEntitled || error.code==CMErrorMotionActivityNotAvailable)
+             {
+                 [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"activtiy"];
+                 handler(NO);
+             }
+             
+         }
+         else
+         {
+             if (activities)
+             {
+                 [[NSUserDefaults standardUserDefaults] setValue:@"default" forKey:@"activtiy"];
+                 handler(YES);
+             }
+         }
+         
+         
+     }];
+    
+}
+
 @end
 

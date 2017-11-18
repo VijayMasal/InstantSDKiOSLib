@@ -42,6 +42,8 @@ static SleepManager *sharedSleepManager=nil;
 
 -(void)startCoreMotionSleepTracking:(DefaultSleepPermissionCustomCompletionBlock)handler
 {
+    
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"defaultSleepEnable"];
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitSleep==NO || permissions.isSleep==NO)
     {
@@ -58,6 +60,7 @@ static SleepManager *sharedSleepManager=nil;
              }
              else
              {
+                 [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
                  handler(SleepPermissionFail);
              }
          }];
@@ -75,8 +78,7 @@ static SleepManager *sharedSleepManager=nil;
 -(void)stopCoreMotionSleepTracking:(void(^)(BOOL isStop))handler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleepdate"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"defaultSleepEnable"];
     });
     
     handler(YES);
@@ -86,6 +88,7 @@ static SleepManager *sharedSleepManager=nil;
 
 -(void)startHealthKitSleepTracking:(HealthKitSleepPermissionCustomCompletionBlock)handler
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"healthkitSleepEnable"];
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isDefaultSleep==NO || permissions.isSleep==NO)
     {
@@ -93,10 +96,7 @@ static SleepManager *sharedSleepManager=nil;
          {
              if (healthKitPermission==YES)
              {
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"sleep"];
-                     [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"sleepdate"];
-                 });
+                 
                  
                  [[SleepManager sharedSleepManager] getSleepOptionAndFindSleepDataFromStartTime:[NSDate date] toEndTime:[NSDate date]];
                  handler(HealthKitSleepPermissionSuccess);
@@ -120,8 +120,7 @@ static SleepManager *sharedSleepManager=nil;
 -(void)stopHealthKitSleepTracking:(void(^)(BOOL isStop))handler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleepdate"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"healthkitSleepEnable"];
     });
     handler(YES);
     
@@ -399,6 +398,19 @@ static SleepManager *sharedSleepManager=nil;
                                         completion:^(BOOL success, NSError *  error)
      {
         
+         if (success==YES)
+         {
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"sleep"];
+                 [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"sleepdate"];
+             });
+         }
+         else
+         {
+             dispatch_async(dispatch_get_main_queue(), ^{
+             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
+             });
+         }
              permissionHandler(success);
         
         
@@ -708,7 +720,51 @@ static SleepManager *sharedSleepManager=nil;
     return startingTime;
 }
 
-
+/*
+ *@discussion Checks Sleep Permission
+ */
+-(void)checkSleepPermission:(void(^)(BOOL isSleepPermission))handler
+{
+    NSString *sleepOptionName=[[NSUserDefaults standardUserDefaults]valueForKey:@"sleep"];
+    if ([sleepOptionName isEqualToString:@"default"])
+    {
+        [_sleepActivity queryActivityStartingFromDate:[NSDate date] toDate:[NSDate date] toQueue:[NSOperationQueue new] withHandler:^(NSArray * activities, NSError *  error)
+         {
+             if (error)
+             {
+                 if (error.code==CMErrorMotionActivityNotAuthorized || error.code==CMErrorMotionActivityNotEntitled || error.code==CMErrorMotionActivityNotAvailable)
+                 {
+                     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
+                     handler(NO);
+                 }
+                 
+             }
+             else
+             {
+                 if (activities)
+                 {
+                     [[NSUserDefaults standardUserDefaults] setValue:@"default" forKey:@"sleep"];
+                     handler(YES);
+                 }
+             }
+         }];
+        
+    }
+    else if ([sleepOptionName isEqualToString:@"healthkit"])
+    {
+        [self healthKitPermission:^(BOOL healthKitPermission)
+        {
+            if (healthKitPermission==YES)
+            {
+                handler(YES);
+            }
+            else
+            {
+                handler(NO);
+            }
+        }];
+    }
+}
 
 
 

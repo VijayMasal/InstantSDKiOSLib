@@ -61,14 +61,6 @@ typedef void (^FitnessPermissionCustomCompletionBlock)(FitnessActivityPermission
 -(void)findAllFtinessActivityTime:(NSArray<CMMotionActivity *>*)activity  endDate:(NSDate *)currentDate toQueue:(NSOperationQueue *)toQueue withCallBackHandler:(void(^)(BOOL isParseActivityTIme))block;
 
 
-/*!
- * @discussion Gets walking, running, travelling, cycling data from CMMotionActivityManager and passes it to findAllFtinessActivityTime with activity info array and steps count
- * @param startDate last midnight date and time.
- * @param endDate current date and time.
- 
- */
--(void)getWalkRunTravelCycleFromStartDate:(NSDate *)startDate endDate:(NSDate *)endDate withCallBackHandeler:(void(^)(BOOL isActive))activityData;
-
 
 /*!
  * @discussion Gets n number of days of fitness and insert n number of fitness activity data into fitness table
@@ -92,6 +84,11 @@ typedef void (^FitnessPermissionCustomCompletionBlock)(FitnessActivityPermission
  */
 
 -(NSDate *)nextMidNight:(NSDate *)date;
+
+/*
+ *@discussion Check activity permissions using core motion
+ */
+-(void)checkActivityPermision:(void(^)(BOOL activityPermission))handler;
 
 
 @end

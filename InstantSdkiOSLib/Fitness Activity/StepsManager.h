@@ -129,7 +129,15 @@ typedef void (^stepFitBitPermissionCustomCompletionBlock)(StepsFitBitPermission 
 
 -(NSDate *)nextMidNight:(NSDate *)date;
 
+/*
+ *@discussion Checks permission of steps
+ */
+-(void)checkStpsPermission:(void(^)(BOOL stepsPermission))handler;
 
+/*!
+ * @discussion Gets healthkit permission for parsing Steps data from healthkit.
+ */
+-(void)healthKitPermission:(void(^)(BOOL healthKitPermission))permissionHandler;
 
 @end
 

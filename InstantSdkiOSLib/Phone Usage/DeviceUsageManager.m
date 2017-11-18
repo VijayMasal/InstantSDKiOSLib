@@ -47,6 +47,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 
 -(void)startPhoneUsageTracking:(PhoneUsagePermissionCustomCompletionBlock)handler
 {
+   [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"phoneUsageEnable"];
     BOOL passcodeEnable=[self checkPasscodeState];
     if (passcodeEnable==YES)
     {
@@ -96,12 +97,14 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 
 -(void)stopPhoneUsageTracking:(void(^)(BOOL isStop))handler
 {
+    
     BOOL isStopPhoneUsage=[self stopTimer];
     
     if (isStopPhoneUsage ==YES)
     {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"phoneUsageEnable"];
+            
         });
         
         handler(YES);

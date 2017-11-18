@@ -135,6 +135,80 @@ static InstantDataBase* sharedInstantDataBase=nil;
     return _locationModel;
 }
 
+
+
+/*
+ *@discussion Checks all feature flags
+ */
+-(LocationNameAndTime *)checkFeatureEnableFlags
+{
+    BOOL phoneUsageFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"phoneUsageEnable"];
+    if (phoneUsageFeature==YES)
+    {
+        _locationModel.isPhoneUsageFeature=YES;
+    }
+    else
+    {
+        _locationModel.isPhoneUsageFeature=NO;
+    }
+    BOOL significantLocationFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"significantLocationEnable"];
+    if (significantLocationFeature==YES)
+    {
+        _locationModel.isSignificantLocationFeature=YES;
+    }
+    else
+    {
+        _locationModel.isSignificantLocationFeature=NO;
+    }
+    BOOL defaultActivityFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"defaultActivityEnable"];
+    if (defaultActivityFeature==YES)
+    {
+        _locationModel.isDefaultActivityFeature=YES;
+    }
+    else
+    {
+        _locationModel.isDefaultActivityFeature=NO;
+    }
+    BOOL healthkitActivityFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"healthActivityEnable"];
+    if (healthkitActivityFeature==YES)
+    {
+        _locationModel.isHealthKitActivityFeature=YES;
+    }
+    else
+    {
+        _locationModel.isHealthKitActivityFeature=NO;
+    }
+    BOOL fitbitActivityFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"fitbitActivityEnable"];
+    if (fitbitActivityFeature==YES)
+    {
+        _locationModel.isFitBitActivityFeature=YES;
+    }
+    else
+    {
+        _locationModel.isFitBitActivityFeature=NO;
+    }
+    BOOL defaultSleepFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"defaultSleepEnable"];
+    if (defaultSleepFeature==YES)
+    {
+        _locationModel.isDefaultSleepFeature=YES;
+    }
+    else
+    {
+        _locationModel.isDefaultSleepFeature=NO;
+    }
+    
+    BOOL healthKitSleepFeature=[[NSUserDefaults standardUserDefaults]boolForKey:@"healthkitSleepEnable"];
+    if (healthKitSleepFeature==YES)
+    {
+        _locationModel.isHealthKitSleepFeature=YES;
+    }
+    else
+    {
+      _locationModel.isHealthKitSleepFeature=NO;
+    }
+    return _locationModel;
+}
+
 /// Get sqlite file path form document directory
 -(NSString *)getDocumentpath
 {
@@ -990,6 +1064,40 @@ static InstantDataBase* sharedInstantDataBase=nil;
     
     
 }
+
+/// Clear database and NSUserDefault after logout.
+-(void)clearDatabaseAndUserDefaultAfterLogout:(void(^)(BOOL isClear))handler
+{
+    
+    NSArray *tableNameArray=[NSArray arrayWithObjects:@"DeviceUsage",@"Places",@"Fitness",@"Steps" ,@"Sleep", nil];
+    
+    for (int i=0; i<tableNameArray.count; i++)
+    {
+        NSString *tableName=[tableNameArray objectAtIndex:i];
+        
+        NSString *phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@",tableName];
+        
+        sqlite3_stmt *phoneStatement=nil;
+        if (sqlite3_prepare_v2(instantDB, [phoneDeleteQuelry UTF8String], -1, &phoneStatement, NULL)==SQLITE_OK)
+        {
+            if (sqlite3_step(phoneStatement)==SQLITE_DONE)
+            {
+                NSLog(@"clear %@ table from database",tableName);
+            }
+            sqlite3_finalize(phoneStatement);
+        }
+        
+    }
+    [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"customeactivtiydate"];
+    [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"activitydate"];
+    [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"lastLocation"];
+    [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"sleepdate"];
+    [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"sleepdelete"];
+    
+    handler(YES);
+    
+}
+
 
 ///After delete records from database insert current time record into database for updateing record after deleted record time.
 -(void)insertCurrentRecordAfterDeleteRecordsFromDatabase:(NSString *)tableName

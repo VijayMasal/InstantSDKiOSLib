@@ -26,7 +26,15 @@ static NSString * const placenamekey=@"placename";
 
 +(instancetype)sharedInstantDataBase;
 
+/*
+ *@discussion Checks all permissions flags
+ */
 -(LocationNameAndTime *)checkPermissionFlags;
+
+/*
+ *@discussion Checks all feature flags
+ */
+-(LocationNameAndTime *)checkFeatureEnableFlags;
 
 -(BOOL)createDataBase;
 
@@ -284,6 +292,11 @@ static NSString * const placenamekey=@"placename";
  * @discussion deletes database table records from given fromDate to toDate.
  */
 -(void)deleteTrackedData:(NSDate *)fromDate toDate:(NSDate *)toDate withCallBackHandler:(void(^)(BOOL isDelete))handler;
+
+/*!
+ * @discussion Clear database and NSUserDefault after logout.
+ */
+-(void)clearDatabaseAndUserDefaultAfterLogout:(void(^)(BOOL isClear))handler;
 
 
 #pragma mark -fetchTrackedData

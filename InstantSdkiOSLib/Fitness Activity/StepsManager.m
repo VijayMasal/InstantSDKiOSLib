@@ -33,7 +33,9 @@ static StepsManager *sharedStepsManager=nil;
     
     if (self=[super init])
     {
+        
         self.stepspedometer=[[CMPedometer alloc]init];
+       
     }
     
     return self;
@@ -42,29 +44,16 @@ static StepsManager *sharedStepsManager=nil;
 /// Start steps tracking using healthkit. If healthkit tracking starts successful handler returns StepsHealthKitPermissionSuccess otherwise handler returns StepsHealthKitPermissionFail.
 -(void)startHealthKitActivityTracking:(stepsPermissionCustomCompletionBlock)handler
 {
-
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"healthActivityEnable"];
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isFitBitActivity==NO || permissions.isCustomeActivity==NO)
     {
-        HKHealthStore *healthStore;
         
-        healthStore=[[HKHealthStore alloc]init];
-        if ([HKHealthStore isHealthDataAvailable] == YES)
-        {
-      
-        NSSet *readObjectTypes  = [NSSet setWithObjects:[HKSampleType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount],  nil];
-        
-        [healthStore requestAuthorizationToShareTypes:nil
-                                            readTypes:readObjectTypes
-                                           completion:^(BOOL success, NSError *  error)
+        [self healthKitPermission:^(BOOL healthKitPermission)
          {
-             if (success==YES)
+             if (healthKitPermission==YES)
              {
-                
-                     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
-                     [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"customeactivtiy"];
-                
-                 permissions.isHealthKitActivity=YES;
+                 
                  [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
                  
                  handler(StepsHealthKitPermissionSuccess);
@@ -74,15 +63,8 @@ static StepsManager *sharedStepsManager=nil;
                  permissions.isHealthKitActivity=NO;
                  handler(StepsHealthKitPermissionFail);
              }
-            
+             
          }];
-        }
-        else
-        {
-            permissions.isHealthKitActivity=NO;
-            handler(StepsHealthKitPermissionFail);
-        }
-        
         
         
     }
@@ -101,8 +83,7 @@ static StepsManager *sharedStepsManager=nil;
 -(void)stopHealthKitActivityTracking:(void(^)(BOOL isStop))handler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiy"];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiydate"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"healthActivityEnable"];
     });
     handler(YES);
 }
@@ -112,6 +93,7 @@ static StepsManager *sharedStepsManager=nil;
 
 -(void)startFitBitActivityTracking:(stepFitBitPermissionCustomCompletionBlock)handler
 {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"fitbitActivityEnable"];
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitActivity==NO || permissions.isCustomeActivity==NO)
     {
@@ -149,8 +131,7 @@ static StepsManager *sharedStepsManager=nil;
 -(void)stopFitBitActivityTracking:(void(^)(BOOL isStop))handler
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiy"];
-        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiydate"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"fitbitActivityEnable"];
     });
     
     handler(YES);
@@ -520,6 +501,70 @@ static StepsManager *sharedStepsManager=nil;
     return startingTime;
 }
 
+/*
+ *@discussion Checks permission of steps
+ */
+-(void)checkStpsPermission:(void(^)(BOOL stepsPermission))handler
+{
+    LocationNameAndTime *activityType=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
+    
+    if (activityType.isHealthKitActivity==YES)
+    {
+        [self healthKitPermission:^(BOOL healthKitPermission) {
+            if (healthKitPermission==YES)
+            {
+                handler(YES);
+            }
+            else
+            {
+                handler(NO);
+            }
+        }];
+    }
+    else if (activityType.isFitBitActivity==YES)
+    {
+        handler(YES);
+    }
+    
+}
+
+
+/// Get healthkit permission for parsing steps data from healthkit.
+
+-(void)healthKitPermission:(void(^)(BOOL healthKitPermission))permissionHandler
+{
+    HKHealthStore *healthStore=[[HKHealthStore alloc]init];
+    if ([HKHealthStore isHealthDataAvailable] == YES)
+    {
+        NSSet *readObjectTypes  = [NSSet setWithObjects:[HKSampleType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount],  nil];
+        
+        [healthStore requestAuthorizationToShareTypes:nil
+                                            readTypes:readObjectTypes
+                                           completion:^(BOOL success, NSError *  error)
+         {
+             if (success==YES)
+             {
+                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
+                 [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"customeactivtiy"];
+                 
+                
+             }
+             else
+             {
+                 [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiy"];
+             }
+             permissionHandler(success);
+             
+             
+             
+         }];
+    }
+    else
+    {
+        permissionHandler(NO);
+    }
+    
+}
 
 
 @end

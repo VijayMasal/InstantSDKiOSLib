@@ -148,6 +148,11 @@ typedef void (^HealthKitSleepPermissionCustomCompletionBlock)(HealthKitSleepPerm
 
 -(NSDate *)nextMidNight:(NSDate *)date;
 
+/*
+ *@discussion Checks Sleep Permission
+ */
+
+-(void)checkSleepPermission:(void(^)(BOOL isSleepPermission))handler;
 
 @end
 
