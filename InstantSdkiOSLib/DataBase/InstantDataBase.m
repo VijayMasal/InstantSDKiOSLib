@@ -1465,35 +1465,58 @@ static InstantDataBase* sharedInstantDataBase=nil;
 -(void)applicationMovesBackgroundToForeground
 {
     /// App moves from background to foreground updates location time using stored location and after that updates nsuser dafault location.
-    LocationNameAndTime *permissions=[self checkPermissionFlags];
-    if (permissions.isSignificantLocation==NO)
+    LocationNameAndTime *permissions=[self checkFeatureEnableFlags];
+    if (permissions.isSignificantLocationFeature==NO)
     {
-        if (permissions.isSleep==YES)
+        if (permissions.isDefaultSleepFeature==YES || permissions.isHealthKitSleepFeature==YES)
         {
-            [[SleepManager sharedSleepManager] getNNumberOfSleepData];
+            [[SleepManager sharedSleepManager]checkSleepPermission:^(BOOL isSleepPermission)
+             {
+                 if (isSleepPermission==YES)
+                 {
+                     [[SleepManager sharedSleepManager] getNNumberOfSleepData];
+                 }
+             }];
         }
         
-        if (permissions.isActivity==YES)
+        if (permissions.isDefaultActivityFeature == YES)
         {
-            [[ActivityManager sharedFitnessActivityManager]findNNumberOfDaysOfFitnessData];
-            if (permissions.isCustomeActivity==NO)
-            {
-                [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
-            }
+            [[ActivityManager sharedFitnessActivityManager]checkActivityPermision:^(BOOL activityPermission) {
+                if (activityPermission==YES)
+                {
+                    [[ActivityManager sharedFitnessActivityManager]findNNumberOfDaysOfFitnessData];
+                    if (permissions.isHealthKitActivityFeature==NO || permissions.isFitBitActivityFeature == NO)
+                    {
+                        [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
+                    }
+                }
+            }];
         }
         
-        if (permissions.isCustomeActivity==YES)
-        {
-            [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
+        if (permissions.isHealthKitActivityFeature == YES || permissions.isFitBitActivityFeature == YES) {
+            [[StepsManager sharedStepsManager]checkStpsPermission:^(BOOL stepsPermission) {
+                if (stepsPermission==YES)
+                {
+                    [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
+                }
+            }];
         }
+        
     }
     
     
-    if (permissions.isSignificantLocation==YES)
+    if (permissions.isSignificantLocationFeature==YES)
     {
-        [[LocationManager sharedLocationManager]checkLocationPermission];
-        [[LocationManager sharedLocationManager]backgroundToForgroundLocationUpdate];
+        BOOL isSignificant=[[LocationManager sharedLocationManager]checkLocationPermission];
+        if (isSignificant==YES)
+        {
+            [[LocationManager sharedLocationManager]checkLocationPermission];
+            [[LocationManager sharedLocationManager]backgroundToForgroundLocationUpdate];
+        }
+        
     }
+    
+    
 }
 
 /// Get fitbit token for fetching data from fitbit.
