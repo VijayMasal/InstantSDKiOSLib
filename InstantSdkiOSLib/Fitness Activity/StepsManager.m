@@ -53,7 +53,7 @@ static StepsManager *sharedStepsManager=nil;
          {
              if (healthKitPermission==YES)
              {
-                 
+                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
                  [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
                  
                  handler(StepsHealthKitPermissionSuccess);
@@ -544,7 +544,7 @@ static StepsManager *sharedStepsManager=nil;
          {
              if (success==YES)
              {
-                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
+                 
                  [[NSUserDefaults standardUserDefaults] setValue:@"healthkit" forKey:@"customeactivtiy"];
                  
                 

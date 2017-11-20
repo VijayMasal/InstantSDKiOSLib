@@ -50,10 +50,6 @@ static ActivityManager *sharedFitnessActivityManager=nil;
     [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"activitydate"];
     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
     
-    
-    LocationNameAndTime *activityType=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
-    if (activityType.isDefaultActivity==YES)
-    {
         
         NSMutableDictionary *lastActivityDict=[[InstantDataBase sharedInstantDataBase]selectLastActivityFromFitness];
         
@@ -80,8 +76,7 @@ static ActivityManager *sharedFitnessActivityManager=nil;
                  handler(FitnessActivityPermissionFail);
              }
          }];
-        
-    }
+   
     
 }
 
