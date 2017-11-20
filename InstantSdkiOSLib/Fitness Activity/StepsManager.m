@@ -53,10 +53,21 @@ static StepsManager *sharedStepsManager=nil;
          {
              if (healthKitPermission==YES)
              {
-                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
-                 [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
+                 BOOL isHealthkitOpenFirstTime=[[NSUserDefaults standardUserDefaults]boolForKey:@"openHealthkitFirtTime"];
                  
-                 handler(StepsHealthKitPermissionSuccess);
+                 if (isHealthkitOpenFirstTime==NO)
+                 {
+                     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"openHealthkitFirtTime"];
+                     NSDate *lastWeekStartDate=[[NSDate date]dateByAddingTimeInterval:-7*24*60*60];
+                     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:lastWeekStartDate] forKey:@"customeactivtiydate"];
+                     [self findNNumberOfDaysOfFitnessData];
+                     
+                 }
+                 else
+                 {
+                     [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
+                     [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
+                 }
              }
              else
              {
