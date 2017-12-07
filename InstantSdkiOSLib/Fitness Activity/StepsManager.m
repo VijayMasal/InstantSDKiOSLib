@@ -53,10 +53,12 @@ static StepsManager *sharedStepsManager=nil;
          {
              if (healthKitPermission==YES)
              {
+                 ///check healthkit before enable or not
                  BOOL isHealthkitOpenFirstTime=[[NSUserDefaults standardUserDefaults]boolForKey:@"openHealthkitFirtTime"];
                  
                  if (isHealthkitOpenFirstTime==NO)
                  {
+                     ///if health kit enable first time after installation of app then add last week healthkit data into database
                      [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"openHealthkitFirtTime"];
                      NSDate *lastWeekStartDate=[[NSDate date]dateByAddingTimeInterval:-7*24*60*60];
                      [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:lastWeekStartDate] forKey:@"customeactivtiydate"];
@@ -68,6 +70,8 @@ static StepsManager *sharedStepsManager=nil;
                      [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
                      [self getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:[NSDate date]] endDate:[NSDate date]];
                  }
+                 permissions.isHealthKitActivity=YES;
+                 handler(StepsHealthKitPermissionSuccess);
              }
              else
              {

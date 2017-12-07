@@ -222,7 +222,8 @@ static InstantDataBase* sharedInstantDataBase=nil;
 {
     NSDateFormatter *dateformate=[[NSDateFormatter alloc]init];
     [dateformate setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
-    [dateformate setDateFormat:@"MMM dd,YYYY"];
+    //[dateformate setDateFormat:@"MMM dd,YYYY"];
+     [dateformate setDateFormat:@"yyyy-MM-dd"];
     NSString *todayDate=[dateformate stringFromDate:date];
     return todayDate;
 }
@@ -1082,7 +1083,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
         {
             if (sqlite3_step(phoneStatement)==SQLITE_DONE)
             {
-                NSLog(@"clear %@ table from database",tableName);
+                
             }
             sqlite3_finalize(phoneStatement);
         }
