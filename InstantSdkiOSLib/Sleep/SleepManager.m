@@ -79,6 +79,7 @@ static SleepManager *sharedSleepManager=nil;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"defaultSleepEnable"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
     });
     
     handler(YES);
@@ -121,6 +122,7 @@ static SleepManager *sharedSleepManager=nil;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"healthkitSleepEnable"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"sleep"];
     });
     handler(YES);
     

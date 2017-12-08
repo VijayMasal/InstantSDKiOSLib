@@ -99,6 +99,7 @@ static StepsManager *sharedStepsManager=nil;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"healthActivityEnable"];
+        [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiy"];
     });
     handler(YES);
 }
@@ -147,6 +148,7 @@ static StepsManager *sharedStepsManager=nil;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"fitbitActivityEnable"];
+         [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"customeactivtiy"];
     });
     
     handler(YES);
