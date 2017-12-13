@@ -50,10 +50,10 @@ static LocationManager *sharedLocationManager=nil;
     _locationManager.delegate=self;
     if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)])
     {
-        if(@available(iOS 9.0, *)) {
+        //if(@available(iOS 9.0, *)) {
        
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
-        }
+        //}
     }
    
     _locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
@@ -353,11 +353,6 @@ static LocationManager *sharedLocationManager=nil;
                 
                 [self checkLocationExistsOrNotInDataBase:locations locationTime:addTime startDate:location.timestamp endDate:[nextMidNight dateByAddingTimeInterval:-60] numberOfDays:numberOfDay];
                 
-                //Call Activity Manager to find Fitness Data
-                [[ActivityManager sharedFitnessActivityManager]getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:location.timestamp] endDate:nextMidNight];
-                [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:location.timestamp] endDate:nextMidNight];
-                //
-                
             }
             else
             {
@@ -371,13 +366,6 @@ static LocationManager *sharedLocationManager=nil;
                     addTime=[date timeIntervalSinceDate:lastMidNight];
                     
                     [self checkLocationExistsOrNotInDataBase:locations locationTime:addTime startDate:lastMidNight endDate:date numberOfDays:numberOfDay];
-                    
-                    //Calls Activity Manager to find Fitness Data
-                    [[ActivityManager sharedFitnessActivityManager]getFitnessDataFromCoreMotionStartDate:lastMidNight endDate:date];
-                    [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:lastMidNight endDate:date];
-                    
-                    //Call sleep manager to get sleep data
-                    [[SleepManager sharedSleepManager] getSleepOptionAndFindSleepDataFromStartTime:NextDate toEndTime:NextDate];
                     
                 }
                 else
@@ -393,12 +381,6 @@ static LocationManager *sharedLocationManager=nil;
                     
                     [self checkLocationExistsOrNotInDataBase:locations locationTime:addTime startDate:lastMidNight endDate:[nextMidNight dateByAddingTimeInterval:-60] numberOfDays:numberOfDay];
                     
-                    //Calls Activity Manager to find Fitness Data
-                    [[ActivityManager sharedFitnessActivityManager]getFitnessDataFromCoreMotionStartDate:lastMidNight endDate:nextMidNight];
-                    [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:lastMidNight endDate:nextMidNight];
-                    
-                    //Call sleep manager to get sleep data
-                    [[SleepManager sharedSleepManager] getSleepOptionAndFindSleepDataFromStartTime:lastMidNight toEndTime:nextMidNight];
                     
                 }
                 
@@ -417,18 +399,43 @@ static LocationManager *sharedLocationManager=nil;
             
             [self checkLocationExistsOrNotInDataBase:locations locationTime:addTime startDate:location.timestamp endDate:date numberOfDays:numberOfDay];
             
-            //Calls Activity Manager to find Fitness Data
-            [[ActivityManager sharedFitnessActivityManager]getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:location.timestamp] endDate:date ];
-            
-            [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:[self midNightOfLastNight:location.timestamp] endDate:date ];
-            //
-            //Call sleep manager to get sleep data
-            [[SleepManager sharedSleepManager] getSleepOptionAndFindSleepDataFromStartTime:date toEndTime:date];
-            
         }
         
     }
+    LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkFeatureEnableFlags];
+    if (permissions.isDefaultSleepFeature==YES || permissions.isHealthKitSleepFeature==YES)
+    {
+        [[SleepManager sharedSleepManager]checkSleepPermission:^(BOOL isSleepPermission)
+         {
+             if (isSleepPermission==YES)
+             {
+                 [[SleepManager sharedSleepManager] getNNumberOfSleepData];
+             }
+         }];
+    }
     
+    if (permissions.isDefaultActivityFeature == YES)
+    {
+        [[ActivityManager sharedFitnessActivityManager]checkActivityPermision:^(BOOL activityPermission) {
+            if (activityPermission==YES)
+            {
+                [[ActivityManager sharedFitnessActivityManager]findNNumberOfDaysOfFitnessData];
+                if (permissions.isHealthKitActivityFeature==NO && permissions.isFitBitActivityFeature == NO)
+                {
+                    [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
+                }
+            }
+        }];
+    }
+    
+    if (permissions.isHealthKitActivityFeature == YES || permissions.isFitBitActivityFeature == YES) {
+        [[StepsManager sharedStepsManager]checkStpsPermission:^(BOOL stepsPermission) {
+            if (stepsPermission==YES)
+            {
+                [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
+            }
+        }];
+    }
     
 }
 

@@ -60,8 +60,11 @@ static StepsManager *sharedStepsManager=nil;
                  {
                      ///if health kit enable first time after installation of app then add last week healthkit data into database
                      [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"openHealthkitFirtTime"];
+                     
                      NSDate *lastWeekStartDate=[[NSDate date]dateByAddingTimeInterval:-7*24*60*60];
+                     
                      [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:lastWeekStartDate] forKey:@"customeactivtiydate"];
+                     
                      [self findNNumberOfDaysOfFitnessData];
                      
                  }
@@ -113,15 +116,15 @@ static StepsManager *sharedStepsManager=nil;
     LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
     if (permissions.isHealthKitActivity==NO || permissions.isCustomeActivity==NO)
     {
-        if (@available(iOS 9.0, *)) {
+      /*  if (@available(iOS 9.0, *)) {
            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"]];
             
         }
         else
-        {
+        {*/
          
             [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"] options:@{} completionHandler:nil];
-        }
+        //}
         
         
         
@@ -390,9 +393,7 @@ static StepsManager *sharedStepsManager=nil;
     NSInteger numberOfDay=0;
     NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDate *lastActivityDate;
-    
-    
-    
+  
     lastActivityDate= (NSDate *)[[NSUserDefaults standardUserDefaults] objectForKey:@"customeactivtiydate"];
     
     
