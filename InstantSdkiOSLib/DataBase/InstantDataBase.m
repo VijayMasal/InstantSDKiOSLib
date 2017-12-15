@@ -13,8 +13,9 @@
 #import "ActivityManager.h"
 #import "StepsManager.h"
 #import "DeviceUsageManager.h"
+#import <sqlite3.h>
 @implementation InstantDataBase
-
+static  sqlite3 *instantDB;
 static InstantDataBase* sharedInstantDataBase=nil;
 +(instancetype)sharedInstantDataBase
 {
@@ -808,16 +809,14 @@ static InstantDataBase* sharedInstantDataBase=nil;
 -(void)fitBitPermissions:(void(^)(BOOL fitBitPermission))PermissionHandler
 {
 
-   /* if (@available(iOS 9.0, *)) {
+    #if __IPHONE_OS_VERSION_MAX_ALLOWED < 10000
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"]];
         
-    }
-    else
-    {*/
+#else
        
         
          [[UIApplication sharedApplication]openURL:[NSURL URLWithString:@"http://www.fitbit.com/oauth2/authorize?response_type=token&client_id=228LXP&redirect_uri=http%3A%2F%2Femberify.com%2Ffitbit1.html&scope=activity%20profile%20sleep&expires_in=604800"] options:@{} completionHandler:nil];
-    //}
+#endif
     
     PermissionHandler(YES);
 }

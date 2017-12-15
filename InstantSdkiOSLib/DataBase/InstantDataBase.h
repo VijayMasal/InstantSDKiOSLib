@@ -7,7 +7,6 @@
 //  Reviewed on 13/11/17
 
 #import <Foundation/Foundation.h>
-#import <sqlite3.h>
 #import "LocationNameAndTime.h"
 
 
@@ -17,10 +16,7 @@ static NSString * const placenamekey=@"placename";
  
  */
 @interface InstantDataBase : NSObject
-{
-    sqlite3 *instantDB;
-    
-}
+
 @property(strong,nonatomic)LocationNameAndTime *locationModel;
 @property(strong,nonatomic)NSMutableArray *placeRecordArray;
 

@@ -50,10 +50,10 @@ static LocationManager *sharedLocationManager=nil;
     _locationManager.delegate=self;
     if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)])
     {
-        //if(@available(iOS 9.0, *)) {
+        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
        
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
-        //}
+#endif
     }
    
     _locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
