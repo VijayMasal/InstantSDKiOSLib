@@ -16,6 +16,7 @@
 @implementation LocationManager
 /// Creates location manager singletone class. That class manages all location related information like location name, time, latitude, longitude and date.
 static LocationManager *sharedLocationManager=nil;
+
 +(LocationManager *)sharedLocationManager
 {
     
@@ -50,12 +51,12 @@ static LocationManager *sharedLocationManager=nil;
     _locationManager.delegate=self;
     if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)])
     {
-        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-       
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
+        
         [_locationManager setAllowsBackgroundLocationUpdates:YES];
 #endif
     }
-   
+    
     _locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
     _locationManager.distanceFilter = 500;
     _locationManager.pausesLocationUpdatesAutomatically=NO;
@@ -71,41 +72,27 @@ static LocationManager *sharedLocationManager=nil;
     }
     else
     {
-        BOOL isStart=[self startSignificantLocation];
-        if (isStart==YES)
+        
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"significantLocationEnable"];
+        LocationPermission permissionStatus=[self locationPermissionCheck];
+        
+        if (permissionStatus==LocationPermissionSuccess)
         {
-            
-            handler(LocationPermissionSuccess);
+            _locationManager=nil;
+            [[NSUserDefaults standardUserDefaults]setValue:@"significant" forKey:@"location"];
+            [self locationManagerInit];
+            [_locationManager startMonitoringSignificantLocationChanges];
             
         }
-        else
-        {
-            
-            handler(LocationPermissionFail);
-        }
+        handler(permissionStatus);
+        
+        
+        
     }
     
 }
 
-/// Starts location tracking using significant change location method
--(BOOL)startSignificantLocation
-{
-[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"significantLocationEnable"];
-    BOOL isAuthorize= [self checkLocationPermission];
-    //if loaction service authorization is successful then start location using significant change location
-    if (isAuthorize==YES)
-    {
-        _locationManager=nil;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSUserDefaults standardUserDefaults]setValue:@"significant" forKey:@"location"];
-        });
-        [self locationManagerInit];
-        [_locationManager startMonitoringSignificantLocationChanges];
-    }
-    
-    return isAuthorize;
-    
-}
+
 
 /// Called to stop location service. If location service successfully stops handler returns status 1 otherwise fail handler returns 2.
 
@@ -118,6 +105,7 @@ static LocationManager *sharedLocationManager=nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"significantLocationEnable"];
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
         });
     }
     
@@ -129,9 +117,8 @@ static LocationManager *sharedLocationManager=nil;
 -(void)startStanderedLocation
 {
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSUserDefaults standardUserDefaults]setValue:@"standered" forKey:@"location"];
-    });
+    [[NSUserDefaults standardUserDefaults]setValue:@"standered" forKey:@"location"];
+    
     [_locationManager startUpdatingLocation];
     NSMutableArray *locations=[[NSMutableArray alloc]init];
     
@@ -144,52 +131,83 @@ static LocationManager *sharedLocationManager=nil;
     
 }
 
--(BOOL)checkLocationPermission
+
+-(LocationPermission)locationPermissionCheck
 {
-    LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
-    
-    BOOL isAuthorize=NO;
-    if ([CLLocationManager locationServicesEnabled] == NO)
+    LocationPermission status;
+    if ([CLLocationManager locationServicesEnabled]==NO)
     {
-        isAuthorize=NO;
-        //If location service not enabled then show location permission alert on view
-        
-        
-    } else
+        //isPermission=@"Fail";
+        status=LocationPermissionFail;
+    }
+    else
     {
         CLAuthorizationStatus authorizationStatus= [CLLocationManager authorizationStatus];
         
         if(authorizationStatus == kCLAuthorizationStatusDenied || authorizationStatus == kCLAuthorizationStatusRestricted)
         {
-            isAuthorize=NO;
-            if (permissions.isOnPhoneUsage==YES || permissions.isSignificantLocation == YES)
-            {
-                [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
-            }
-            
-            
+            //isPermission=@"Fail";
+            status=LocationPermissionFail;
+        }
+        else if (authorizationStatus == kCLAuthorizationStatusNotDetermined)
+        {
+            //isPermission=@"NotDetermined";
+            status=LocationPermissionNotDetermined;
         }
         else
         {
-            isAuthorize=YES;
-            if (permissions.isOnPhoneUsage==YES)
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[NSUserDefaults standardUserDefaults]setValue:@"standered" forKey:@"location"];
-                });
-            }
-            else if (permissions.isSignificantLocation==YES)
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[NSUserDefaults standardUserDefaults]setValue:@"significant" forKey:@"location"];
-                });
-            }
+            //isPermission=@"Success";
+            status=LocationPermissionSuccess;
+        }
         
+    }
+    return status;
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    LocationPermission locationPermision;
+    LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkFeatureEnableFlags];
+    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse)
+    {
+        
+        locationPermision=LocationPermissionSuccess;
+        if (permissions.isSignificantLocationFeature == YES)
+        {
+            
+            [[NSUserDefaults standardUserDefaults]setValue:@"significant" forKey:@"location"];
+            
+            permissions.isSignificantLocation=YES;
+            if (self.delegate && [self.delegate respondsToSelector:@selector(updateLocationPermissionStatus:)])
+            {
+                [self.delegate updateLocationPermissionStatus:LocationPermissionSuccess];
+            }
+            [_locationManager startMonitoringSignificantLocationChanges];
+        }
+        else if (permissions.isPhoneUsageFeature == YES)
+        {
+            permissions.isOnPhoneUsage=YES;
+            
+            [[NSUserDefaults standardUserDefaults]setValue:@"standered" forKey:@"location"];
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"significantLocationEnable"];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(updateLocationPermissionStatus:)])
+            {
+                [self.delegate updateLocationPermissionStatus:LocationPermissionSuccess];
+            }
+            
         }
     }
-    
-    return isAuthorize;
+    else if (status==kCLAuthorizationStatusDenied)
+    {
+        [[NSUserDefaults standardUserDefaults]setValue:@"standered" forKey:@"location"];
+        
+        if (self.delegate && [self.delegate respondsToSelector:@selector(updateLocationPermissionStatus:)])
+        {
+            [self.delegate updateLocationPermissionStatus:LocationPermissionFail];
+        }
+    }
 }
+
 
 #pragma mark -Significant Location
 /** Gets location updates when the user changes their location (sometimes gets triggered at same place) like Latitude, Longitude, Horizontal Accuracy, Vertical Accuracy, TimeStamp,Speed. Can be called even if the app is closed by the user. */

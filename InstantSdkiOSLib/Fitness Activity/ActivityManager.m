@@ -48,35 +48,50 @@ static ActivityManager *sharedFitnessActivityManager=nil;
 {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"defaultActivityEnable"];
     [[NSUserDefaults standardUserDefaults]setValue:[NSDate date] forKey:@"activitydate"];
-    [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
     
-        
-        NSMutableDictionary *lastActivityDict=[[InstantDataBase sharedInstantDataBase]selectLastActivityFromFitness];
-        
-        NSDate *starttime=[self nextMidNight:[NSDate date]];
-        NSDate *lastEndtime=[lastActivityDict valueForKey:@"endtime"];
-        
-        if (lastEndtime)
-        {
-            starttime=lastEndtime;
-        }
-        
-        //Get activity like steps count, walking, travelling, running, cycling from coremotion framework
-        
-        [self checkActivityPermision:^(BOOL activityPermission)
+    
+    //Get activity like steps count, walking, travelling, running, cycling from coremotion framework
+    
+    [self checkActivityPermision:^(BOOL activityPermission)
+     {
+         if (activityPermission==YES)
          {
-             if (activityPermission==YES)
+             NSMutableDictionary *lastActivityDict=[[InstantDataBase sharedInstantDataBase]selectLastActivityFromFitness];
+             NSDate *starttime;
+             BOOL enableCoreMotionFirtTime=[[NSUserDefaults standardUserDefaults]boolForKey:@"enableCoreMotionFirtTime"];
+             
+             if (enableCoreMotionFirtTime==NO)
              {
-                 [self getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
-                 [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
-                 handler(FitnessActivityPermissionSuccess);
+                 ///if health kit enable first time after installation of app then add last week healthkit data into database
+                 [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"enableCoreMotionFirtTime"];
+                 starttime=[self nextMidNight:[[NSDate date]dateByAddingTimeInterval:-7*24*60*60]];
+                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:starttime] forKey:@"customeactivtiydate"];
+                 [[StepsManager sharedStepsManager]findNNumberOfDaysOfFitnessData];
              }
              else
              {
-                 handler(FitnessActivityPermissionFail);
+                 starttime=[self nextMidNight:[NSDate date]];
+                 NSDate *lastEndtime=[lastActivityDict valueForKey:@"endtime"];
+                 
+                 if (lastEndtime)
+                 {
+                     starttime=lastEndtime;
+                     
+                 }
+                 [[NSUserDefaults standardUserDefaults]setValue:[self midNightOfLastNight:[NSDate date]] forKey:@"customeactivtiydate"];
+                 [[StepsManager sharedStepsManager]getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
+                 
              }
-         }];
-   
+             [self getFitnessDataFromCoreMotionStartDate:starttime endDate:[NSDate date]];
+             
+             handler(FitnessActivityPermissionSuccess);
+         }
+         else
+         {
+             handler(FitnessActivityPermissionFail);
+         }
+     }];
+    
     
 }
 

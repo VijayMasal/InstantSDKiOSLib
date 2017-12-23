@@ -7,7 +7,7 @@
 //  Reviewed on 12/11/17
 
 #import "DeviceUsageManager.h"
-#import "LocationManager.h"
+
 #import "ActivityManager.h"
 #import "SleepManager.h"
 @implementation DeviceUsageManager
@@ -47,21 +47,28 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
 
 -(void)startPhoneUsageTracking:(PhoneUsagePermissionCustomCompletionBlock)handler
 {
-   [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"phoneUsageEnable"];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"phoneUsageEnable"];
     BOOL passcodeEnable=[self checkPasscodeState];
     if (passcodeEnable==YES)
     {
-        BOOL isStart=[self startTimer];
+        //BOOL isStart=[self startTimer];
+        [[LocationManager sharedLocationManager]startStanderedLocation];
+        LocationPermission staus=[[LocationManager sharedLocationManager] locationPermissionCheck];
         
-        if (isStart==YES)
+        if (staus==LocationPermissionSuccess)
         {
+            [self startTimer];
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lastLocation"];
             handler(PhoneUsagePermissionSuccess);
+        }
+        else if (staus==LocationPermissionNotDetermined)
+        {
+            
+            handler(PhoneUsagePermissionLocationPermissionNotDetermined);
         }
         else
         {
             handler(PhoneUsagePermissionFail);
-            
         }
     }
     else
@@ -72,24 +79,38 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
 }
 
-
-/// Starts timer for getting device usage time and unlock counts.
--(BOOL)startTimer
+///Location manager delegate called when locaiton permission status updated
+-(void)updateLocationPermissionStatus:(LocationPermission)status
 {
-    [self setNotificationObserverForDeviceState];
-      [[LocationManager sharedLocationManager]startStanderedLocation];
-    BOOL isAuthorize= [[LocationManager sharedLocationManager] checkLocationPermission];
-    if (isAuthorize==YES)
+    LocationNameAndTime *permissions=[[InstantDataBase sharedInstantDataBase]checkPermissionFlags];
+    if (permissions.isOnPhoneUsage==YES)
     {
-
-        _timer= [NSTimer scheduledTimerWithTimeInterval:60.0f
-                                                 target: self
-                                               selector: @selector(methodFromTimer)
-                                               userInfo: nil
-                                                repeats: YES];
+        if (status==LocationPermissionSuccess)
+        {
+            [self startTimer];
+        }
     }
     
-    return isAuthorize;
+}
+
+/// Starts timer for getting device usage time and unlock counts.
+-(void)startTimer
+{
+    [self setNotificationObserverForDeviceState];
+    // [[LocationManager sharedLocationManager]startStanderedLocation];
+    //BOOL isAuthorize= [[LocationManager sharedLocationManager] checkLocationPermission];
+    
+    //    if (isAuthorize==YES)
+    //    {
+    
+    _timer= [NSTimer scheduledTimerWithTimeInterval:60.0f
+                                             target: self
+                                           selector: @selector(methodFromTimer)
+                                           userInfo: nil
+                                            repeats: YES];
+    //    }
+    //
+    //    return isAuthorize;
     
 }
 
@@ -104,6 +125,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"phoneUsageEnable"];
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
             
         });
         
@@ -165,9 +187,9 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
     
-   [self keychainErrorToString:status];
+    [self keychainErrorToString:status];
     [self addItemAsync];
- 
+    
 }
 - (void)addItemAsync {
     CFErrorRef error = NULL;
@@ -178,7 +200,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     
     if (sacObject == NULL || error != NULL)
     {
-     
+        
         return;
     }
     
@@ -200,7 +222,7 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
     NSString *message = [NSString stringWithFormat:@"SecItemAdd status: %@", errorString];
     if ([message isEqualToString:@"SecItemAdd status: success"])
     {
-     
+        
         _isUnlock=NO;
         [self deviceUsageTime:_isUnlock];
         

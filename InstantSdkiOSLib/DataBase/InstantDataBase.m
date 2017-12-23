@@ -1022,8 +1022,18 @@ static InstantDataBase* sharedInstantDataBase=nil;
         if ([tableName isEqualToString:@"Steps"])
         {
             NSDate *firstdate=[self midNightOfLastNight:fromDate];
-            NSDate *lastDate= [toDate dateByAddingTimeInterval:-1*24*60*60];
-            phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (starttime >='%@' AND endtime <='%@') or (endtime >='%@' and starttime <= '%@')",tableName,firstdate,lastDate,firstdate,lastDate];
+            BOOL isToday=[[NSCalendar currentCalendar]isDateInToday:toDate];
+            NSDate *lastDate;
+            if (isToday==YES)
+            {
+                lastDate= [toDate dateByAddingTimeInterval:-1*24*60*60];
+            }
+            else
+            {
+                lastDate=toDate;
+            }
+            
+            phoneDeleteQuelry=[NSString stringWithFormat:@"delete from %@ where (starttime >='%@' AND endtime <='%@') or (endtime >'%@' and starttime <= '%@')",tableName,firstdate,lastDate,firstdate,lastDate];
         }
         else if ([tableName isEqualToString:@"Sleep"])
         {
@@ -1040,7 +1050,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
         {
             if (sqlite3_step(phoneStatement)==SQLITE_DONE)
             {
-             
+                
                 [self insertCurrentRecordAfterDeleteRecordsFromDatabase:tableName];
                 if ([tableName isEqualToString:@"Sleep"])
                 {
@@ -1254,7 +1264,7 @@ static InstantDataBase* sharedInstantDataBase=nil;
     NSMutableArray *stepsArray=[[NSMutableArray alloc]init];
     NSMutableArray *dateArray=[[NSMutableArray alloc]init];
     
-    NSString *querySQL=[NSString stringWithFormat:@"select *from steps where starttime >= '%@' and starttime <='%@'order by  endtime asc",[self midNightOfLastNight:fromDate],[self midNightOfLastNight:[toDate dateByAddingTimeInterval:86400*1]]];
+    NSString *querySQL=[NSString stringWithFormat:@"select *from steps where starttime >= '%@' and starttime <'%@'order by  endtime asc",[self midNightOfLastNight:fromDate],[self midNightOfLastNight:[toDate dateByAddingTimeInterval:86400*1]]];
     sqlite3_stmt *statement=nil;
     if (sqlite3_prepare_v2(instantDB, [querySQL UTF8String], -1, &statement, NULL)==SQLITE_OK)
     {
@@ -1508,10 +1518,9 @@ static InstantDataBase* sharedInstantDataBase=nil;
     
     if (permissions.isSignificantLocationFeature==YES)
     {
-        BOOL isSignificant=[[LocationManager sharedLocationManager]checkLocationPermission];
-        if (isSignificant==YES)
+        
+        if (permissions.isSignificantLocation==YES)
         {
-            [[LocationManager sharedLocationManager]checkLocationPermission];
             [[LocationManager sharedLocationManager]backgroundToForgroundLocationUpdate];
         }
         

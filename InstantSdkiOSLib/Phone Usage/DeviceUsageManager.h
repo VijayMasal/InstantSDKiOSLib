@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "UIDevice+PasscodeStatus.h"
 #import "LocationNameAndTime.h"
-
+#import "LocationManager.h"
 
 
 typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
@@ -19,13 +19,16 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
     PhoneUsagePermissionFail=0,
     ///Phone usage tracking successful
     PhoneUsagePermissionSuccess =1,
-   ///Passcode not enabled
-    PhoneUsagePermissionPasscodeNotEnable =2
+    ///Passcode not enabled
+    PhoneUsagePermissionPasscodeNotEnable =2,
+    
+    //Location permission not determined
+    PhoneUsagePermissionLocationPermissionNotDetermined=3
 };
 
 
 
-@interface DeviceUsageManager : NSObject
+@interface DeviceUsageManager : NSObject<LocationPermissionDelegate>
 
 {
     dispatch_queue_t timerQueue;
@@ -52,7 +55,7 @@ typedef void (^PhoneUsagePermissionCustomCompletionBlock)(PhoneUsagePermission p
 /*!
  * @discussion Starts timer for getting device usage time and unlock counts.
  */
--(BOOL)startTimer;
+-(void)startTimer;
 
 /*!
  * @discussion Stops device usage tracking. If deviceUsage tracking stops successfully handler returns status YES, if its fail handler returns NO.

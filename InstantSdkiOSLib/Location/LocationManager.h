@@ -10,6 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "InstantDataBase.h"
 
+
 typedef NS_ENUM(NSUInteger, LocationPermission)
 {
     ///location permission fail
@@ -17,10 +18,19 @@ typedef NS_ENUM(NSUInteger, LocationPermission)
     ///location permission successful
     LocationPermissionSuccess =1 ,
     ///phone usage enable
-    LocationPermissionPhoneUsageEnable =2
+    LocationPermissionPhoneUsageEnable =2,
+    
+    LocationPermissionNotDetermined=3
+    
 };
+/*!
+ *Checked updated location permission
+ */
+@protocol LocationPermissionDelegate;
+
 
 static NSString * const lastlocationdatekey=@"lastlocationdate";
+
 @interface LocationManager : NSObject<CLLocationManagerDelegate>
 /*!
  * @discussion Creates location manager singletone class. It manages all location related information like location name,time,latitude,longitude and date.
@@ -33,6 +43,10 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
 @property (strong, nonatomic)CLGeocoder *geocoder;
 
 @property(nonatomic)BOOL isStanderedLocation;
+
+@property(weak,nonatomic)id<LocationPermissionDelegate> delegate;
+
+
 
 -(NSString *)cutNumberInto4DecimalPoint:(double)number;
 
@@ -102,12 +116,20 @@ typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locat
  * @discussion Ckecks Location permission allow or denied.
  
  */
--(BOOL)checkLocationPermission;
 
+-(LocationPermission)locationPermissionCheck;
+
+@end
+/*!
+ *Checked updated location permission
+ */
+@protocol LocationPermissionDelegate<NSObject>
+
+@optional
+
+-(void)updateLocationPermissionStatus:(LocationPermission)status;
 
 
 @end
-
-
 
 
