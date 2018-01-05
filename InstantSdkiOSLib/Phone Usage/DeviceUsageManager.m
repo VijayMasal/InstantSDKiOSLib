@@ -54,6 +54,10 @@ static DeviceUsageManager *sharedDeviceUsage=nil;
         //BOOL isStart=[self startTimer];
         [[LocationManager sharedLocationManager]startStanderedLocation];
         LocationPermission staus=[[LocationManager sharedLocationManager] locationPermissionCheck];
+        while (staus == LocationPermissionNotDetermined)
+        {
+            staus=[[LocationManager sharedLocationManager] locationPermissionCheck];
+        }
         
         if (staus==LocationPermissionSuccess)
         {
