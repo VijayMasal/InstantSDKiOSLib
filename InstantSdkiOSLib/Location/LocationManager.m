@@ -76,7 +76,7 @@ static LocationManager *sharedLocationManager=nil;
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"significantLocationEnable"];
         
         
-        LocationPermission permissionStatus;
+        LocationPermission permissionStatus=[self locationPermissionCheck];
         
        while( permissionStatus == LocationPermissionNotDetermined ) {
             permissionStatus=[self locationPermissionCheck];
