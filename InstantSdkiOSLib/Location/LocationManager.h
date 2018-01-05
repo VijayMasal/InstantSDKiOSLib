@@ -19,14 +19,10 @@ typedef NS_ENUM(NSUInteger, LocationPermission)
     LocationPermissionSuccess =1 ,
     ///phone usage enable
     LocationPermissionPhoneUsageEnable =2,
-    
+    //location permission not determined
     LocationPermissionNotDetermined=3
     
 };
-/*!
- *Checked updated location permission
- */
-@protocol LocationPermissionDelegate;
 
 
 static NSString * const lastlocationdatekey=@"lastlocationdate";
@@ -44,7 +40,7 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
 
 @property(nonatomic)BOOL isStanderedLocation;
 
-@property(weak,nonatomic)id<LocationPermissionDelegate> delegate;
+
 
 
 
@@ -56,10 +52,6 @@ static NSString * const lastlocationdatekey=@"lastlocationdate";
 typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locationPermission);
 -(void)startSignificantLocation:(locationPermissionCustomCompletionBlock)handler;
 
-/*!
- * @discussion Starts location service using significant change location. If significant location service starts successfully returns Yes otherwise No.
- */
-- (BOOL )startSignificantLocation;
 
 
 
@@ -118,17 +110,6 @@ typedef void (^locationPermissionCustomCompletionBlock)(LocationPermission locat
  */
 
 -(LocationPermission)locationPermissionCheck;
-
-@end
-/*!
- *Checked updated location permission
- */
-@protocol LocationPermissionDelegate<NSObject>
-
-@optional
-
--(void)updateLocationPermissionStatus:(LocationPermission)status;
-
 
 @end
 

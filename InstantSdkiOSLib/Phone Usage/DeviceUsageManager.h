@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, PhoneUsagePermission)
 
 
 
-@interface DeviceUsageManager : NSObject<LocationPermissionDelegate>
+@interface DeviceUsageManager : NSObject
 
 {
     dispatch_queue_t timerQueue;
