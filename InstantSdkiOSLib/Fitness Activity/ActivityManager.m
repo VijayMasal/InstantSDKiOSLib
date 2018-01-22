@@ -171,25 +171,33 @@ static ActivityManager *sharedFitnessActivityManager=nil;
             //Gets walking time using last and current date timeinterval
             int lastWalkingindex=[[walkingArray objectAtIndex:i] intValue];
             int currentWalkingIndex=[[walkingArray objectAtIndex:i+1] intValue];
-            if (lastWalkingindex==1 && currentWalkingIndex==0 &&confidence !=0 )
+            if (lastWalkingindex==1 && currentWalkingIndex==0 &&confidence !=0 && startDate != endDate )
             {
-                
+               
                 NSInteger walkTime=[endDate timeIntervalSinceDate:startDate];
                 
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Walking" activityTime:walkTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData)
-                 {
-                     
-                 }];
+                if (walkTime>1)
+                {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Walking" activityTime:walkTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData)
+                     {
+                         
+                     }];
+                }
+                
                 
             }
-            else if (lastWalkingindex==1 && currentWalkingIndex==1  )
+            else if (lastWalkingindex==1 && currentWalkingIndex==1 && startDate != endDate )
             {
                 NSInteger walkTime=[endDate timeIntervalSinceDate:startDate];
                 
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Walking" activityTime:walkTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData)
-                 {
-                     
-                 }];
+                if (walkTime>1)
+                {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Walking" activityTime:walkTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData)
+                     {
+                         
+                     }];
+                }
+               
                 
                 
             }
@@ -197,61 +205,83 @@ static ActivityManager *sharedFitnessActivityManager=nil;
             //Gets running time using last and current date timeinterval
             int lastRunningIndex=[[runningArray objectAtIndex:i] intValue];
             int currentRunningIndex=[[runningArray objectAtIndex:i+1] intValue];
-            if (lastRunningIndex==1 && currentRunningIndex==0 &&confidence!=0 )
+            if (lastRunningIndex==1 && currentRunningIndex==0 &&confidence!=0 && startDate != endDate )
             {
                 NSInteger runTime=[endDate timeIntervalSinceDate:startDate];
                 
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Running" activityTime:runTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
-                    
-                }];
+                if (runTime>1)
+                {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Running" activityTime:runTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
+                        
+                    }];
+                }
+               
             }
-            else if (lastRunningIndex==1 && currentRunningIndex==1)
+            else if (lastRunningIndex==1 && currentRunningIndex==1 && startDate != endDate)
             {
                 NSInteger runTime=[endDate timeIntervalSinceDate:startDate];
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Running" activityTime:runTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
-                    
-                }];
+                if (runTime>1) {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Running" activityTime:runTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
+                        
+                    }];
+                }
+                
                 
             }
             
             //Gets travelling time using last and current date timeinterval
             int lastTravellingIndex=[[travellingArray objectAtIndex:i] intValue];
             int currentTravellingIndex=[[travellingArray objectAtIndex:i+1] intValue];
-            if (lastTravellingIndex==1 && currentTravellingIndex==0 &&confidence ==2 )
+            if (lastTravellingIndex==1 && currentTravellingIndex==0 &&confidence ==2 && startDate != endDate )
             {
                 NSInteger travelTime=[endDate timeIntervalSinceDate:startDate];
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Travel" activityTime:travelTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
-                    
-                }];
+                if (travelTime>1) {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Travel" activityTime:travelTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
+                        
+                    }];
+                }
+               
                 
             }
-            else if (lastTravellingIndex==1 && currentTravellingIndex==1 &&confidence ==2 )
+            else if (lastTravellingIndex==1 && currentTravellingIndex==1 &&confidence ==2  && startDate != endDate)
             {
                 
                 NSInteger travelTime=[endDate timeIntervalSinceDate:startDate];
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Travel" activityTime:travelTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
-                    
-                }];
+                if (travelTime>1) {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Travel" activityTime:travelTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
+                        
+                    }];
+                }
+              
                 
             }
             //Gets cycling time using last and current date timeinterval
             int lastCyclingIndex=[[cyclingArray objectAtIndex:i] intValue];
             int  currentCyclingIndex =[[cyclingArray objectAtIndex:i+1] intValue];
-            if (lastCyclingIndex==1 && currentCyclingIndex==0 &&confidence!=0 )
+            if (lastCyclingIndex==1 && currentCyclingIndex==0 &&confidence!=0  && startDate != endDate)
             {
                 NSInteger cycleTime=[endDate timeIntervalSinceDate:startDate];
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Cycling" activityTime:cycleTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
-                    
-                }];
+                if (cycleTime>1)
+                {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Cycling" activityTime:cycleTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
+                        
+                    }];
+                }
+                
                 
             }
             
-            else if (lastCyclingIndex==1 && currentCyclingIndex==1)
+            else if (lastCyclingIndex==1 && currentCyclingIndex==1 && startDate != endDate)
             {
                 NSInteger cycleTime=[endDate timeIntervalSinceDate:startDate];
-                [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Cycling" activityTime:cycleTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
-                    
-                }];
+                
+                if (cycleTime>1)
+                {
+                    [[InstantDataBase sharedInstantDataBase]insertFitnessDataActivity:@"Cycling" activityTime:cycleTime steps:0 startTime:startDate endTime:endDate withCallBackHandler:^(BOOL isInsertData) {
+                        
+                    }];
+                }
+                
                 
             }
             
