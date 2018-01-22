@@ -274,56 +274,29 @@ static StepsManager *sharedStepsManager=nil;
 ///Gets the step count for today using healthKit passing start date  (last mid night date) and end date (current date) and total steps are stored into totalSteps that are inserted into steps table of database.
 -(void)getStepsFromHealthKitStartDate:(NSDate *)startDate endDate:(NSDate *)endDate withCallBackHandler:(void(^)(NSInteger stepsCount))activityHandler
 {
-    totalSteps=0;
+    //totalSteps=0;
     HKHealthStore *healthStore = [[HKHealthStore alloc] init];
-    // Use the sample type for step count
-    HKSampleType *sampleType = [HKSampleType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount];
+    HKQuantityType *sampleType1 = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierStepCount];
+    NSPredicate *predicate1 = [HKQuery predicateForSamplesWithStartDate:startDate endDate:endDate options:HKQueryOptionStrictStartDate];
     
-    // HKAuthorizationStatus status = [healthStore authorizationStatusForType:sampleType];
-    
-    
-    // Creates a predicate to set start/end date bounds of the query
-    NSPredicate *predicate = [HKQuery predicateForSamplesWithStartDate:startDate endDate:endDate options:HKQueryOptionStrictStartDate];
-    
-    // Creates a sort descriptor for sorting by start date
-    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:HKSampleSortIdentifierStartDate ascending:YES];
-    
-    
-    
-    HKSampleQuery *sampleQuery = [[HKSampleQuery alloc] initWithSampleType:sampleType
-                                                                 predicate:predicate
-                                                                     limit:HKObjectQueryNoLimit
-                                                           sortDescriptors:@[sortDescriptor]
-                                                            resultsHandler:^(HKSampleQuery *query, NSArray *results, NSError *error) {
-                                                                NSInteger totalFSteps=0;
-                                                                if(!error && results)
-                                                                {
-                                                                    
-                                                                    for(HKQuantitySample *samples in results)
-                                                                    {
-                                                                        HKQuantity  *quantity=samples.quantity;
-                                                                        NSString *string=[NSString stringWithFormat:@"%@",quantity];
-                                                                        NSString *newString1 = [string stringByReplacingOccurrencesOfString:@" count" withString:@""];
-                                                                        
-                                                                        NSInteger count=[newString1 integerValue];
-                                                                        totalFSteps=totalFSteps+count;
-                                                                        
-                                                                    }
-                                                                    totalSteps=[NSNumber numberWithInteger:totalFSteps];
-                                                                    activityHandler([totalSteps integerValue]);
-                                                                }
-                                                                else
-                                                                {
-                                                                    totalSteps=[NSNumber numberWithInteger:totalFSteps];
-                                                                    activityHandler([totalSteps integerValue]);
-                                                                }
-                                                                
-                                                                
-                                                                
-                                                            }];
-    
-    // Execute the query
-    [healthStore executeQuery:sampleQuery];
+    HKStatisticsQuery *statisticQuery=[[HKStatisticsQuery alloc]initWithQuantityType:sampleType1 quantitySamplePredicate:predicate1 options:HKStatisticsOptionCumulativeSum completionHandler:^(HKStatisticsQuery * _Nonnull query, HKStatistics * _Nullable result, NSError * _Nullable error)
+                                       {
+                                           NSInteger count=0;
+                                           if (result) {
+                                               HKQuantity  *quantity=result.sumQuantity;
+                                               NSString *string=[NSString stringWithFormat:@"%@",quantity];
+                                               NSString *newString1 = [string stringByReplacingOccurrencesOfString:@" count" withString:@""];
+                                               count=[newString1 integerValue];
+                                               
+                                               
+                                           }
+                                           
+                                           activityHandler(count);
+                                           
+                                           
+                                           
+                                       }];
+    [healthStore executeQuery:statisticQuery];
     
     
     
