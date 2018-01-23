@@ -91,6 +91,10 @@ static LocationManager *sharedLocationManager=nil;
             handler(permissionStatus);
             
         }
+        else if (permissionStatus == LocationPermissionFail)
+        {
+            handler(permissionStatus);
+        }
         
         
         

@@ -1521,7 +1521,18 @@ static InstantDataBase* sharedInstantDataBase=nil;
         
         if (permissions.isSignificantLocation==YES)
         {
-            [[LocationManager sharedLocationManager]backgroundToForgroundLocationUpdate];
+            LocationPermission locationPermissionStatus = [[LocationManager sharedLocationManager]locationPermissionCheck];
+            
+            if (locationPermissionStatus == LocationPermissionSuccess)
+            {
+                [[LocationManager sharedLocationManager]backgroundToForgroundLocationUpdate];
+            }
+            else
+            {
+                [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"location"];
+                
+                
+            }
         }
         
     }
